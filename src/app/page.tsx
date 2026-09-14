@@ -49,7 +49,7 @@ export default async function HomePage() {
             className="rounded-lg border p-4 text-sm"
             style={{ borderColor: "var(--border)", color: "var(--muted)" }}
           >
-            No products yet. Apply <code>supabase/schema.sql</code> and{" "}
+            No products yet. Run the migrations in <code>supabase/migrations</code> and{" "}
             <code>supabase/seed.sql</code> to populate the catalog.
           </p>
         )}

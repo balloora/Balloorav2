@@ -1,7 +1,7 @@
 /**
  * Database types for Supabase.
  *
- * This is a hand-written subset that matches `supabase/schema.sql`. Once your
+ * This is a hand-written subset that matches `supabase/migrations`. Once your
  * schema is live you can regenerate a complete, always-accurate version with:
  *
  *   npx supabase gen types typescript --project-id <your-project-id> \

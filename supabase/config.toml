@@ -1,0 +1,54 @@
+# Supabase CLI configuration for Balloora.
+# Docs: https://supabase.com/docs/guides/cli/config
+#
+# `project_id` is a local identifier used to namespace the local dev stack.
+# Link this folder to your hosted project with:
+#     supabase link --project-ref <your-project-ref>
+project_id = "balloora"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+# The major version of Postgres. Must match your hosted project
+# (Dashboard → Settings → Database).
+major_version = 15
+
+[db.seed]
+# `supabase db reset` runs these SQL files after applying all migrations.
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+# Local email testing inbox (Inbucket) for magic-link auth during development.
+[inbucket]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+# Base URL of your app; magic links / redirects are validated against this.
+site_url = "http://localhost:3000"
+# Additional allowed redirect URLs (add your Vercel domain here too).
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# Set to false to use magic links only (no password required).
+enable_confirmations = true
+
+[storage]
+enabled = true
+# Max upload size for product images, etc.
+file_size_limit = "50MiB"

@@ -59,17 +59,45 @@ cp .env.example .env.local
 The app validates these at runtime via [`src/lib/env.ts`](./src/lib/env.ts) and
 fails fast with a clear message if any are missing.
 
-## 4. Set up the database
+## 4. Set up the database (migrations)
 
-In the Supabase Dashboard → **SQL Editor**, run in order:
+The schema is tracked as versioned migrations under
+[`supabase/migrations/`](./supabase/migrations). This is the source of truth for
+the database — apply them, don't hand-edit tables in the dashboard.
 
-1. [`supabase/schema.sql`](./supabase/schema.sql) — tables, RLS policies, triggers, functions
-2. [`supabase/seed.sql`](./supabase/seed.sql) — optional demo products (development only)
+**Recommended — Supabase CLI** (`npm i -g supabase` or `brew install supabase/tap/supabase`):
 
-> Regenerate exact TypeScript types any time with:
+```bash
+# One-time: link this folder to your hosted project
+supabase login
+supabase link --project-ref <your-project-ref>   # from the project URL / Settings
+
+# Apply all migrations to the linked (hosted) database
+supabase db push
+
+# Local development stack (Docker) with a full reset + seed
+supabase start
+supabase db reset      # re-applies every migration, then runs seed.sql
+```
+
+**Quick alternative — SQL Editor:** paste the contents of each file in
+`supabase/migrations/` (in filename order), then `supabase/seed.sql`, into the
+Dashboard → SQL Editor and run them.
+
+### Making future schema changes
+
+Never edit an already-applied migration. Instead, create a new one:
+
+```bash
+supabase migration new add_reviews_table   # creates a timestamped .sql file
+# ...write your ALTER/CREATE statements in the new file...
+supabase db push                           # apply it to the hosted DB
+```
+
+> After any schema change, regenerate exact TypeScript types:
 >
 > ```bash
-> npx supabase gen types typescript --project-id <id> --schema public > src/types/database.types.ts
+> supabase gen types typescript --linked > src/types/database.types.ts
 > ```
 
 ## 5. Run locally
