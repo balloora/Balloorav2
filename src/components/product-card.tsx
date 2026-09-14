@@ -8,12 +8,12 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.id}`}
-      className="group focus-visible:ring-brand-500 flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-lg focus-visible:ring-2 focus-visible:outline-none"
+      className="group focus-visible:ring-gold-400 flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-lg focus-visible:ring-2 focus-visible:outline-none"
       style={{ borderColor: "var(--border)", background: "var(--card)" }}
     >
       <div
         className="relative aspect-square w-full overflow-hidden"
-        style={{ background: "var(--color-brand-50)" }}
+        style={{ background: "var(--color-cream-100)" }}
       >
         {product.image_url ? (
           <Image

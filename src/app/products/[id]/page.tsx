@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: PageProps) {
     <article className="grid gap-8 md:grid-cols-2">
       <div
         className="relative aspect-square w-full overflow-hidden rounded-2xl border"
-        style={{ borderColor: "var(--border)", background: "var(--color-brand-50)" }}
+        style={{ borderColor: "var(--border)", background: "var(--color-cream-100)" }}
       >
         {product.image_url ? (
           <Image

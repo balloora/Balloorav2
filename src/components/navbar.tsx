@@ -1,52 +1,216 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { useCart } from "@/lib/cart-context";
+import { occasions } from "@/lib/occasions";
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/#about" },
+  { label: "Packages", href: "/#packages" },
+  { label: "Gallery", href: "/#gallery" },
+  { label: "Contact", href: "/#contact" },
+];
+
+function BalloonMark() {
+  return (
+    <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden className="text-gold-500">
+      <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <ellipse cx="15" cy="14" rx="7" ry="8.5" />
+        <ellipse cx="25" cy="16" rx="6" ry="7.5" />
+        <path d="M15 22.5c-1 2 1 3 0 5M25 23.5c1 1.5-1 2.5 0 4.5" />
+      </g>
+    </svg>
+  );
+}
 
 export function Navbar() {
   const { itemCount } = useCart();
+  const [occasionsOpen, setOccasionsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header
-      className="sticky top-0 z-40 border-b backdrop-blur"
-      style={{
-        borderColor: "var(--border)",
-        background: "color-mix(in srgb, var(--background) 85%, transparent)",
-      }}
+      className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur"
+      style={{ borderColor: "var(--border)" }}
     >
-      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <span
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-white"
-            style={{ background: "var(--color-brand-600)" }}
-            aria-hidden
-          >
-            B
+      <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <BalloonMark />
+          <span className="leading-none">
+            <span className="text-gold-600 block font-serif text-2xl font-bold tracking-tight">
+              Balloora
+            </span>
+            <span
+              className="block text-[0.6rem] font-medium tracking-[0.35em] uppercase"
+              style={{ color: "var(--muted)" }}
+            >
+              Events
+            </span>
           </span>
-          Balloora
         </Link>
 
-        <div className="flex items-center gap-4 text-sm">
-          <Link href="/" className="hover:underline">
-            Browse
+        {/* Primary nav (desktop) */}
+        <div className="hidden items-center gap-7 text-sm font-medium lg:flex">
+          <Link href="/" className="hover:text-gold-600 text-gold-600 transition-colors">
+            Home
           </Link>
-          <Link href="/account" className="hover:underline">
-            Account
+          <Link href="/#about" className="hover:text-gold-600 transition-colors">
+            About
           </Link>
-          <Link href="/cart" className="relative inline-flex items-center gap-1 hover:underline">
-            Cart
-            {itemCount > 0 && (
-              <span
-                className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold text-white"
-                style={{ background: "var(--color-brand-600)" }}
+
+          {/* Occasions dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setOccasionsOpen(true)}
+            onMouseLeave={() => setOccasionsOpen(false)}
+          >
+            <button
+              type="button"
+              className="hover:text-gold-600 inline-flex items-center gap-1 transition-colors"
+              onClick={() => setOccasionsOpen((v) => !v)}
+              aria-expanded={occasionsOpen}
+            >
+              Occasions
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            {occasionsOpen && (
+              <div
+                className="absolute left-1/2 top-full w-60 -translate-x-1/2 pt-3"
+                role="menu"
               >
+                <ul
+                  className="overflow-hidden rounded-xl border bg-white p-2 shadow-xl"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  {occasions.map((o) => (
+                    <li key={o.slug}>
+                      <Link
+                        href={`/shop?occasion=${o.slug}`}
+                        className="hover:bg-cream-100 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors"
+                        role="menuitem"
+                      >
+                        <span className="text-gold-600">{o.icon}</span>
+                        <span>{o.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <Link href="/#packages" className="hover:text-gold-600 transition-colors">
+            Packages
+          </Link>
+          <Link href="/shop" className="hover:text-gold-600 transition-colors">
+            Gallery
+          </Link>
+          <Link href="/#contact" className="hover:text-gold-600 transition-colors">
+            Contact
+          </Link>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link href="/shop" aria-label="Search" className="hover:text-gold-600 hidden sm:block">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.7" />
+              <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            </svg>
+          </Link>
+          <Link href="/#contact" aria-label="Call us" className="hover:text-gold-600 hidden sm:block">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="M5 4h3l1.5 4L7.5 9.5a11 11 0 0 0 5 5l1.5-2L18 14v3a2 2 0 0 1-2 2A13 13 0 0 1 3 6a2 2 0 0 1 2-2Z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+          <Link href="/cart" aria-label="Cart" className="hover:text-gold-600 relative">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="M6 6h15l-1.5 8.5a2 2 0 0 1-2 1.5H9.5a2 2 0 0 1-2-1.6L5.2 4H3"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
+              <circle cx="17" cy="20" r="1.4" fill="currentColor" />
+            </svg>
+            {itemCount > 0 && (
+              <span className="bg-gold-500 absolute -right-2 -top-2 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[0.65rem] font-semibold text-white">
                 {itemCount}
               </span>
             )}
           </Link>
+
+          <Link
+            href="/#contact"
+            className="bg-gold-500 hover:bg-gold-600 hidden rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors sm:inline-block"
+          >
+            Get a Quote
+          </Link>
+
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            className="lg:hidden"
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d={mobileOpen ? "M6 6l12 12M6 18L18 6" : "M4 7h16M4 12h16M4 17h16"}
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="border-t lg:hidden" style={{ borderColor: "var(--border)" }}>
+          <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 text-sm font-medium">
+            {navLinks.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="hover:bg-cream-100 rounded-lg px-3 py-2"
+                onClick={() => setMobileOpen(false)}
+              >
+                {l.label}
+              </Link>
+            ))}
+            <Link
+              href="/shop"
+              className="hover:bg-cream-100 rounded-lg px-3 py-2"
+              onClick={() => setMobileOpen(false)}
+            >
+              Shop
+            </Link>
+            <Link
+              href="/#contact"
+              className="bg-gold-500 mt-2 rounded-lg px-3 py-2.5 text-center text-white"
+              onClick={() => setMobileOpen(false)}
+            >
+              Get a Quote
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

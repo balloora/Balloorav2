@@ -1,28 +1,39 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Playfair_Display, Poppins } from "next/font/google";
 
 import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { CartProvider } from "@/lib/cart-context";
 import { env } from "@/lib/env";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: {
-    default: "Balloora — Marketplace",
-    template: "%s · Balloora",
+    default: "Balloora Events — Balloons, Flowers & Event Decor",
+    template: "%s · Balloora Events",
   },
-  description: "Discover and buy from independent sellers on Balloora.",
+  description:
+    "Balloons, flowers, and bespoke event decor for birthdays, baby showers, weddings, and every special occasion. Beautiful moments start with Balloora.",
   openGraph: {
-    title: "Balloora",
-    description: "Discover and buy from independent sellers on Balloora.",
-    siteName: "Balloora",
+    title: "Balloora Events",
+    description: "Balloons, flowers & bespoke event decor for every special occasion.",
+    siteName: "Balloora Events",
     type: "website",
   },
 };
@@ -30,16 +41,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} min-h-screen antialiased`}>
+      <body className={`${playfair.variable} ${poppins.variable} min-h-screen antialiased`}>
         <CartProvider>
           <Navbar />
-          <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
-          <footer
-            className="mt-16 border-t py-8 text-center text-sm"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            <p>© {new Date().getFullYear()} Balloora. Built with Next.js, Supabase &amp; Stripe.</p>
-          </footer>
+          <main>{children}</main>
+          <SiteFooter />
         </CartProvider>
       </body>
     </html>

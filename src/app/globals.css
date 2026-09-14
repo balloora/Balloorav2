@@ -1,31 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Brand — warm gold + cream */
+  --color-gold-50: #faf5ec;
+  --color-gold-100: #f3e7cf;
+  --color-gold-200: #e8d3a9;
+  --color-gold-300: #d9ba7c;
+  --color-gold-400: #cba75f;
+  --color-gold-500: #bf9b57; /* primary gold */
+  --color-gold-600: #a9853f;
+  --color-gold-700: #8a6c34;
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #f8f2e9;
+  --color-cream-200: #f1e7d6;
+  --color-ink: #2b2a28;
+
+  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 :root {
   --background: #ffffff;
-  --foreground: #0a0a0a;
-  --muted: #6b7280;
-  --border: #e5e7eb;
+  --foreground: #2b2a28;
+  --muted: #6f6d68;
+  --border: #efe7d9;
   --card: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --muted: #9ca3af;
-    --border: #262626;
-    --card: #111111;
-  }
 }
 
 body {
@@ -33,9 +32,16 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Respect users who prefer reduced motion. */
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: var(--font-serif);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

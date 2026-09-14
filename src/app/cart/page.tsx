@@ -64,7 +64,7 @@ export default function CartPage() {
           >
             <div
               className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg"
-              style={{ background: "var(--color-brand-50)" }}
+              style={{ background: "var(--color-cream-100)" }}
             >
               {item.imageUrl ? (
                 <Image
