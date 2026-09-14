@@ -6,7 +6,20 @@ import { z } from "zod";
  * Client-safe values (prefixed with NEXT_PUBLIC_) are validated eagerly and can
  * be imported anywhere. Server-only secrets are exposed through `serverEnv()`,
  * which throws if accessed in the browser — keeping secrets out of client bundles.
+ *
+ * Missing/invalid PUBLIC config is treated as fail-soft: we log a loud warning
+ * and fall back to inert placeholders so the app can still build and deploy
+ * (pages degrade gracefully). Set the real values in your host's environment
+ * (e.g. Vercel → Settings → Environment Variables) and redeploy to go live.
  */
+
+// Inert, schema-valid fallbacks used only when real config is absent.
+const CLIENT_FALLBACK = {
+  NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+  NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key",
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_placeholder",
+} as const;
 
 const clientSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url(),
@@ -35,12 +48,17 @@ const parsedClient = clientSchema.safeParse({
 });
 
 if (!parsedClient.success) {
-  throw new Error(
-    `❌ Invalid or missing public environment variables:\n${formatIssues(parsedClient.error)}`,
+  // Fail-soft: warn loudly but keep building/running with placeholders.
+  console.warn(
+    `⚠️  Missing or invalid public environment variables — using placeholders. ` +
+      `Set these in your environment to enable Supabase/Stripe:\n${formatIssues(parsedClient.error)}`,
   );
 }
 
-export const env = parsedClient.data;
+export const env = parsedClient.success ? parsedClient.data : CLIENT_FALLBACK;
+
+/** True when real public config is present (not running on placeholders). */
+export const isConfigured = parsedClient.success;
 
 let cachedServerEnv: z.infer<typeof serverSchema> | null = null;
 
