@@ -1,0 +1,199 @@
+-- =============================================================================
+-- Balloora — Supabase schema
+-- =============================================================================
+-- Apply this in the Supabase Dashboard → SQL Editor, or with the Supabase CLI:
+--     supabase db push        (migrations workflow)
+--   or paste this file into the SQL Editor and run it.
+--
+-- It creates the marketplace tables, Row Level Security (RLS) policies, an
+-- inventory-decrement function, and a trigger that provisions a profile row
+-- whenever a new auth user signs up.
+-- =============================================================================
+
+-- Extensions -----------------------------------------------------------------
+create extension if not exists "pgcrypto"; -- for gen_random_uuid()
+
+-- Enums ----------------------------------------------------------------------
+do $$ begin
+  create type product_status as enum ('draft', 'active', 'archived');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type order_status as enum ('pending', 'paid', 'fulfilled', 'cancelled', 'refunded');
+exception when duplicate_object then null; end $$;
+
+-- Profiles -------------------------------------------------------------------
+-- One row per auth user. `id` matches auth.users.id.
+create table if not exists public.profiles (
+  id                  uuid primary key references auth.users (id) on delete cascade,
+  full_name           text,
+  avatar_url          text,
+  is_seller           boolean not null default false,
+  stripe_customer_id  text,
+  created_at          timestamptz not null default now()
+);
+
+-- Products -------------------------------------------------------------------
+create table if not exists public.products (
+  id           uuid primary key default gen_random_uuid(),
+  seller_id    uuid not null references public.profiles (id) on delete cascade,
+  title        text not null,
+  slug         text not null unique,
+  description  text,
+  price_cents  integer not null check (price_cents >= 0),
+  currency     text not null default 'usd',
+  image_url    text,
+  category     text,
+  inventory    integer not null default 0 check (inventory >= 0),
+  status       product_status not null default 'draft',
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+create index if not exists products_status_created_idx
+  on public.products (status, created_at desc);
+create index if not exists products_seller_idx on public.products (seller_id);
+
+-- Orders ---------------------------------------------------------------------
+create table if not exists public.orders (
+  id                          uuid primary key default gen_random_uuid(),
+  buyer_id                    uuid references public.profiles (id) on delete set null,
+  status                      order_status not null default 'pending',
+  total_cents                 integer not null check (total_cents >= 0),
+  currency                    text not null default 'usd',
+  stripe_checkout_session_id  text unique,
+  stripe_payment_intent_id    text,
+  created_at                  timestamptz not null default now()
+);
+
+create index if not exists orders_buyer_idx on public.orders (buyer_id, created_at desc);
+
+-- Order items ----------------------------------------------------------------
+create table if not exists public.order_items (
+  id                uuid primary key default gen_random_uuid(),
+  order_id          uuid not null references public.orders (id) on delete cascade,
+  product_id        uuid references public.products (id) on delete set null,
+  title             text not null,
+  unit_price_cents  integer not null check (unit_price_cents >= 0),
+  quantity          integer not null check (quantity > 0)
+);
+
+create index if not exists order_items_order_idx on public.order_items (order_id);
+
+-- updated_at trigger for products -------------------------------------------
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists products_set_updated_at on public.products;
+create trigger products_set_updated_at
+  before update on public.products
+  for each row execute function public.set_updated_at();
+
+-- Auto-create a profile when a new auth user is created ----------------------
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, avatar_url)
+  values (
+    new.id,
+    new.raw_user_meta_data ->> 'full_name',
+    new.raw_user_meta_data ->> 'avatar_url'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- Atomically decrement inventory (called by the Stripe webhook) --------------
+create or replace function public.decrement_inventory(p_product_id uuid, p_quantity integer)
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  update public.products
+     set inventory = greatest(inventory - p_quantity, 0)
+   where id = p_product_id;
+end;
+$$;
+
+-- =============================================================================
+-- Row Level Security
+-- =============================================================================
+alter table public.profiles    enable row level security;
+alter table public.products    enable row level security;
+alter table public.orders      enable row level security;
+alter table public.order_items enable row level security;
+
+-- Profiles: a user can read and update only their own profile.
+drop policy if exists "Profiles are viewable by owner" on public.profiles;
+create policy "Profiles are viewable by owner"
+  on public.profiles for select
+  using (auth.uid() = id);
+
+drop policy if exists "Users can update own profile" on public.profiles;
+create policy "Users can update own profile"
+  on public.profiles for update
+  using (auth.uid() = id);
+
+-- Products: anyone (including anonymous visitors) can read ACTIVE products.
+drop policy if exists "Active products are public" on public.products;
+create policy "Active products are public"
+  on public.products for select
+  using (status = 'active');
+
+-- Sellers can read all of their own products (any status).
+drop policy if exists "Sellers can read own products" on public.products;
+create policy "Sellers can read own products"
+  on public.products for select
+  using (auth.uid() = seller_id);
+
+-- Sellers can create/update/delete their own products.
+drop policy if exists "Sellers can insert own products" on public.products;
+create policy "Sellers can insert own products"
+  on public.products for insert
+  with check (auth.uid() = seller_id);
+
+drop policy if exists "Sellers can update own products" on public.products;
+create policy "Sellers can update own products"
+  on public.products for update
+  using (auth.uid() = seller_id);
+
+drop policy if exists "Sellers can delete own products" on public.products;
+create policy "Sellers can delete own products"
+  on public.products for delete
+  using (auth.uid() = seller_id);
+
+-- Orders: buyers can read only their own orders. Writes go through the
+-- service_role key on the server (bypasses RLS), so no insert/update policy
+-- is granted to regular users.
+drop policy if exists "Buyers can read own orders" on public.orders;
+create policy "Buyers can read own orders"
+  on public.orders for select
+  using (auth.uid() = buyer_id);
+
+-- Order items: readable if the parent order belongs to the user.
+drop policy if exists "Buyers can read own order items" on public.order_items;
+create policy "Buyers can read own order items"
+  on public.order_items for select
+  using (
+    exists (
+      select 1 from public.orders o
+      where o.id = order_items.order_id and o.buyer_id = auth.uid()
+    )
+  );
