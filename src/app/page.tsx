@@ -40,7 +40,7 @@ export default async function HomePage() {
 
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-lg">
           <Image
-            src="/hero.jpg"
+            src="/hero-arch.jpg"
             alt="Elegant white and gold balloon arch with floral arrangements"
             fill
             priority
