@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      // The shop catalog now lives at /explore.
+      { source: "/shop", destination: "/explore", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       // Supabase Storage public bucket images.

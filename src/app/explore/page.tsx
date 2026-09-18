@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/product-card";
+import { isConfigured } from "@/lib/env";
 import { occasions } from "@/lib/occasions";
 import { createClient } from "@/lib/supabase/server";
+import type { Product } from "@/types/database.types";
 
 export const metadata: Metadata = {
-  title: "Shop Collections",
+  title: "Explore",
   description: "Browse balloons, flowers, and event decor for every occasion.",
 };
 
@@ -16,36 +18,43 @@ interface PageProps {
   searchParams: Promise<{ occasion?: string }>;
 }
 
-export default async function ShopPage({ searchParams }: PageProps) {
+export default async function ExplorePage({ searchParams }: PageProps) {
   const { occasion } = await searchParams;
   const activeOccasion = occasions.find((o) => o.slug === occasion);
 
-  const supabase = await createClient();
-  let query = supabase
-    .from("products")
-    .select("*")
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(60);
+  // Skip the network call entirely when Supabase isn't configured (placeholder
+  // env), otherwise every navigation blocks on a request that can only time out.
+  let products: Product[] | null = null;
+  let error: unknown = null;
 
-  // Filter by occasion when one is selected (products.category stores the label).
-  if (activeOccasion) {
-    query = query.eq("category", activeOccasion.name);
+  if (isConfigured) {
+    const supabase = await createClient();
+    let query = supabase
+      .from("products")
+      .select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(60);
+
+    // Filter by occasion when one is selected (products.category stores the label).
+    if (activeOccasion) {
+      query = query.eq("category", activeOccasion.name);
+    }
+
+    ({ data: products, error } = await query);
   }
-
-  const { data: products, error } = await query;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
       <header className="mb-8">
         <p className="text-gold-600 text-sm font-medium tracking-wide uppercase">Balloora Collections</p>
-        <h1 className="mt-1 text-4xl font-bold">{activeOccasion ? activeOccasion.name : "Shop All"}</h1>
+        <h1 className="mt-1 text-4xl font-bold">{activeOccasion ? activeOccasion.name : "Explore"}</h1>
       </header>
 
       {/* Occasion filters */}
       <div className="mb-10 flex flex-wrap gap-2">
         <Link
-          href="/shop"
+          href="/explore"
           className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
             activeOccasion ? "hover:bg-cream-100" : "bg-gold-500 border-gold-500 text-white"
           }`}
@@ -58,7 +67,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
           return (
             <Link
               key={o.slug}
-              href={`/shop?occasion=${o.slug}`}
+              href={`/explore?occasion=${o.slug}`}
               className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 active ? "bg-gold-500 border-gold-500 text-white" : "hover:bg-cream-100"
               }`}

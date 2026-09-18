@@ -14,7 +14,7 @@ const stroke = {
   strokeLinejoin: "round" as const,
 };
 
-/** Marketplace occasions. `slug` maps to /shop?occasion=<slug>. */
+/** Marketplace occasions. `slug` maps to /explore?occasion=<slug>. */
 export const occasions: Occasion[] = [
   {
     name: "Birthday",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Poppins } from "next/font/google";
+import { Great_Vibes, Playfair_Display, Poppins } from "next/font/google";
 
 import { Navbar } from "@/components/navbar";
 import { SiteFooter } from "@/components/site-footer";
@@ -22,6 +22,13 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const greatVibes = Great_Vibes({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: {
@@ -41,7 +48,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${poppins.variable} min-h-screen antialiased`}>
+      <body
+        className={`${playfair.variable} ${poppins.variable} ${greatVibes.variable} min-h-screen antialiased`}
+      >
         <CartProvider>
           <Navbar />
           <main>{children}</main>

@@ -18,7 +18,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
             {occasions.map((o) => (
               <li key={o.slug}>
-                <Link href={`/shop?occasion=${o.slug}`} className="hover:text-gold-600">
+                <Link href={`/explore?occasion=${o.slug}`} className="hover:text-gold-600">
                   {o.name}
                 </Link>
               </li>
@@ -30,8 +30,8 @@ export function SiteFooter() {
           <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase">Explore</h3>
           <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
             <li>
-              <Link href="/shop" className="hover:text-gold-600">
-                Shop Collections
+              <Link href="/explore" className="hover:text-gold-600">
+                Explore Collections
               </Link>
             </li>
             <li>

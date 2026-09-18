@@ -1,101 +1,93 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ProductCard } from "@/components/product-card";
+import { FeaturedDesigns } from "@/components/featured-designs";
 import { occasions } from "@/lib/occasions";
-import { createClient } from "@/lib/supabase/server";
 
 export const revalidate = 60;
 
-export default async function HomePage() {
-  const supabase = await createClient();
-  const { data: products } = await supabase
-    .from("products")
-    .select("*")
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(4);
-
+export default function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- Hero */}
-      <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-20">
-        <div>
-          <h1 className="text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl">
-            Beautiful Moments
-            <br />
-            Start with <span className="text-gold-600">Balloora</span>
+      {/* Full-screen hero; the header floats over it (see Navbar overlay mode). */}
+      <section className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+        {/* Dark textured background */}
+        <Image
+          src="/hero-arch.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/70" />
+        {/* Fine grain for texture */}
+        <div
+          className="absolute inset-0 opacity-[0.18] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-4 pt-28 pb-10 text-center sm:px-6">
+          <p className="text-gold-200 text-[0.7rem] font-medium tracking-[0.35em] uppercase sm:text-sm">
+            Luxury Balloon Décor &amp; Event Styling
+          </p>
+
+          <h1 className="mt-5 flex flex-col items-center">
+            <span className="font-script text-6xl leading-none text-white drop-shadow-lg sm:text-8xl lg:text-9xl">
+              Balloora
+            </span>
+            <span className="mt-3 text-[0.65rem] font-medium tracking-[0.5em] text-white/70 uppercase sm:text-xs">
+              Events
+            </span>
           </h1>
-          <p className="text-gold-600 mt-6 text-lg font-medium">
+
+          <p className="mx-auto mt-8 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
             Balloons • Flowers • Event Decor • Unforgettable Memories
           </p>
-          <Link
-            href="/shop"
-            className="bg-gold-500 hover:bg-gold-600 mt-8 inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-base font-medium text-white shadow-sm transition-colors"
-          >
-            Shop Our Collections
-            <span aria-hidden>→</span>
-          </Link>
-        </div>
 
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-lg">
-          <Image
-            src="/hero-arch.jpg"
-            alt="Elegant white and gold balloon arch with floral arrangements"
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
-          />
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------- Occasions band */}
-      <section className="bg-cream-100 border-y" style={{ borderColor: "var(--border)" }}>
-        <div className="mx-auto grid max-w-7xl grid-cols-3 gap-6 px-4 py-12 sm:px-6 lg:grid-cols-6 lg:px-10">
-          {occasions.map((o) => (
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              key={o.slug}
-              href={`/shop?occasion=${o.slug}`}
-              className="group flex flex-col items-center gap-3 text-center"
+              href="/explore"
+              className="bg-gold-500 hover:bg-gold-400 group inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-medium text-white shadow-lg transition-colors"
             >
-              <span className="bg-gold-100 text-gold-600 group-hover:bg-gold-200 flex h-16 w-16 items-center justify-center rounded-full transition-colors">
-                {o.icon}
+              Explore Our Collections
+              <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                →
               </span>
-              <span className="text-sm font-medium">{o.name}</span>
             </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------- Featured */}
-      <section id="packages" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <p className="text-gold-600 text-sm font-medium tracking-wide uppercase">Curated for you</p>
-            <h2 className="mt-1 text-3xl font-bold sm:text-4xl">Featured Collections</h2>
+            <Link
+              href="/#contact"
+              className="inline-flex items-center rounded-full border border-white/40 px-8 py-3.5 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10"
+            >
+              Get a Quote
+            </Link>
           </div>
-          <Link href="/shop" className="text-gold-600 hidden text-sm font-medium hover:underline sm:block">
-            View all →
-          </Link>
         </div>
 
-        {products && products.length > 0 ? (
-          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+        {/* Occasions band — pinned to the bottom of the hero. A swipe carousel on
+            mobile; a centered wrapped row on larger screens. */}
+        <div className="relative z-10">
+          <div className="hide-scrollbar mx-auto flex max-w-7xl snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 pt-2 sm:px-6 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-10">
+            {occasions.map((o) => (
+              <Link
+                key={o.slug}
+                href={`/explore?occasion=${o.slug}`}
+                className="group inline-flex shrink-0 snap-start items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.07] py-2.5 pr-5 pl-2.5 text-sm font-medium text-white/90 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/15 hover:text-white"
+              >
+                <span className="text-gold-200 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-colors group-hover:bg-white/20">
+                  {o.icon}
+                </span>
+                <span className="whitespace-nowrap">{o.name}</span>
+              </Link>
             ))}
           </div>
-        ) : (
-          <p
-            className="rounded-xl border border-dashed p-8 text-center text-sm"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            Collections appear here once your catalog is connected. Run the migrations in{" "}
-            <code>supabase/migrations</code> and <code>supabase/seed.sql</code>, then set your
-            Supabase environment variables.
-          </p>
-        )}
+        </div>
       </section>
 
       {/* ---------------------------------------------------------------- About */}
@@ -120,7 +112,7 @@ export default async function HomePage() {
             {[
               { stat: "500+", label: "Events Styled" },
               { stat: "6", label: "Occasion Types" },
-              { stat: "5★", label: "Client Rating" },
+              { stat: "4.9★", label: "Client Rating" },
             ].map((s) => (
               <div
                 key={s.label}
@@ -133,6 +125,60 @@ export default async function HomePage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- Featured designs */}
+      <FeaturedDesigns />
+
+      {/* ------------------------------------------------------------ Contact CTA */}
+      <section id="contact" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-10">
+        <div
+          className="relative isolate overflow-hidden rounded-[2rem] border shadow-sm"
+          style={{ borderColor: "var(--border)" }}
+        >
+          {/* Background image + refined overlays */}
+          <Image
+            src="/design-wedding-backdrop.jpg"
+            alt=""
+            fill
+            sizes="(max-width: 1024px) 100vw, 1200px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
+
+          <div className="relative px-6 py-20 sm:px-14 lg:px-20 lg:py-28">
+            <div className="max-w-xl">
+              <p className="text-gold-200 text-xs font-medium tracking-[0.25em] uppercase">
+                Let&apos;s celebrate together
+              </p>
+              <h2 className="mt-4 font-serif text-4xl leading-[1.1] font-semibold text-white sm:text-5xl">
+                Planning something special?
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-white/80 sm:text-lg">
+                Share your vision and our team will craft a complimentary estimate — from intimate
+                gatherings to grand celebrations across Ontario.
+              </p>
+              <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                <Link
+                  href="mailto:hello@balloora.events"
+                  className="bg-gold-500 hover:bg-gold-400 group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-medium text-white transition-colors"
+                >
+                  Contact the Team
+                  <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                    →
+                  </span>
+                </Link>
+                <a
+                  href="tel:+15550102030"
+                  className="text-sm font-medium text-white/90 transition-colors hover:text-white"
+                >
+                  or call +1 (555) 010-2030
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

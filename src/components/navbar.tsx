@@ -1,52 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useCart } from "@/lib/cart-context";
-import { occasions } from "@/lib/occasions";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/#about" },
-  { label: "Packages", href: "/#packages" },
-  { label: "Gallery", href: "/#gallery" },
+  { label: "Explore", href: "/explore" },
   { label: "Contact", href: "/#contact" },
 ];
 
-function BalloonMark() {
-  return (
-    <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden className="text-gold-500">
-      <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-        <ellipse cx="15" cy="14" rx="7" ry="8.5" />
-        <ellipse cx="25" cy="16" rx="6" ry="7.5" />
-        <path d="M15 22.5c-1 2 1 3 0 5M25 23.5c1 1.5-1 2.5 0 4.5" />
-      </g>
-    </svg>
-  );
-}
-
 export function Navbar() {
   const { itemCount } = useCart();
-  const [occasionsOpen, setOccasionsOpen] = useState(false);
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const isHome = pathname === "/";
+
+  // On the homepage the header floats over the full-screen hero (transparent,
+  // light text) and turns solid once the user scrolls past it.
+  useEffect(() => {
+    if (!isHome) return;
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  const overlay = isHome && !scrolled && !mobileOpen;
+
+  // In-page anchors (e.g. /#contact) aren't treated as a "current page".
+  const isActive = (href: string) => {
+    if (href.includes("#")) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   return (
     <header
-      className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur"
-      style={{ borderColor: "var(--border)" }}
+      className={`z-50 transition-colors duration-300 ${
+        isHome ? "fixed inset-x-0 top-0" : "sticky top-0"
+      } ${overlay ? "bg-transparent text-white" : "border-b bg-white/90 backdrop-blur"}`}
+      style={overlay ? undefined : { borderColor: "var(--border)" }}
     >
       <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <BalloonMark />
           <span className="leading-none">
-            <span className="text-gold-600 block font-serif text-2xl font-bold tracking-tight">
+            <span
+              className={`block font-serif text-2xl font-bold tracking-tight ${
+                overlay ? "text-white" : "text-gold-600"
+              }`}
+            >
               Balloora
             </span>
             <span
-              className="block text-[0.6rem] font-medium tracking-[0.35em] uppercase"
-              style={{ color: "var(--muted)" }}
+              className={`block text-[0.6rem] font-medium tracking-[0.35em] uppercase ${
+                overlay ? "text-white/70" : ""
+              }`}
+              style={overlay ? undefined : { color: "var(--muted)" }}
             >
               Events
             </span>
@@ -55,70 +70,32 @@ export function Navbar() {
 
         {/* Primary nav (desktop) */}
         <div className="hidden items-center gap-7 text-sm font-medium lg:flex">
-          <Link href="/" className="hover:text-gold-600 text-gold-600 transition-colors">
-            Home
-          </Link>
-          <Link href="/#about" className="hover:text-gold-600 transition-colors">
-            About
-          </Link>
-
-          {/* Occasions dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setOccasionsOpen(true)}
-            onMouseLeave={() => setOccasionsOpen(false)}
-          >
-            <button
-              type="button"
-              className="hover:text-gold-600 inline-flex items-center gap-1 transition-colors"
-              onClick={() => setOccasionsOpen((v) => !v)}
-              aria-expanded={occasionsOpen}
-            >
-              Occasions
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
-            {occasionsOpen && (
-              <div
-                className="absolute left-1/2 top-full w-60 -translate-x-1/2 pt-3"
-                role="menu"
+          {navLinks.map((l) => {
+            const active = isActive(l.href);
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={active ? "page" : undefined}
+                className={`relative transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:rounded-full after:transition-all after:content-[''] ${
+                  overlay
+                    ? `after:bg-white hover:text-white ${
+                        active ? "font-semibold after:w-full" : "text-white/85 after:w-0 hover:after:w-full"
+                      }`
+                    : `hover:text-gold-600 after:bg-gold-500 ${
+                        active ? "text-gold-600 font-semibold after:w-full" : "after:w-0 hover:after:w-full"
+                      }`
+                }`}
               >
-                <ul
-                  className="overflow-hidden rounded-xl border bg-white p-2 shadow-xl"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  {occasions.map((o) => (
-                    <li key={o.slug}>
-                      <Link
-                        href={`/shop?occasion=${o.slug}`}
-                        className="hover:bg-cream-100 flex items-center gap-3 rounded-lg px-3 py-2 transition-colors"
-                        role="menuitem"
-                      >
-                        <span className="text-gold-600">{o.icon}</span>
-                        <span>{o.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <Link href="/#packages" className="hover:text-gold-600 transition-colors">
-            Packages
-          </Link>
-          <Link href="/shop" className="hover:text-gold-600 transition-colors">
-            Gallery
-          </Link>
-          <Link href="/#contact" className="hover:text-gold-600 transition-colors">
-            Contact
-          </Link>
+                {l.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link href="/shop" aria-label="Search" className="hover:text-gold-600 hidden sm:block">
+          <Link href="/explore" aria-label="Search" className="hover:text-gold-600 hidden sm:block">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
               <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.7" />
               <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
@@ -184,23 +161,22 @@ export function Navbar() {
       {mobileOpen && (
         <div className="border-t lg:hidden" style={{ borderColor: "var(--border)" }}>
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 text-sm font-medium">
-            {navLinks.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="hover:bg-cream-100 rounded-lg px-3 py-2"
-                onClick={() => setMobileOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <Link
-              href="/shop"
-              className="hover:bg-cream-100 rounded-lg px-3 py-2"
-              onClick={() => setMobileOpen(false)}
-            >
-              Shop
-            </Link>
+            {navLinks.map((l) => {
+              const active = isActive(l.href);
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`rounded-lg px-3 py-2 ${
+                    active ? "bg-cream-100 text-gold-600 font-semibold" : "hover:bg-cream-100"
+                  }`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
             <Link
               href="/#contact"
               className="bg-gold-500 mt-2 rounded-lg px-3 py-2.5 text-center text-white"

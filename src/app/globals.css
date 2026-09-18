@@ -17,6 +17,7 @@
 
   --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-script: var(--font-script), "Brush Script MT", cursive;
 }
 
 :root {
@@ -42,11 +43,49 @@ h3,
   font-family: var(--font-serif);
 }
 
+/* Hide scrollbar while keeping horizontal scroll/swipe (mobile carousels) */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Auto-scrolling carousel (Featured Designs) */
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* Track holds two identical copies; each card carries its own trailing
+       margin, so exactly half the track equals one copy — a seamless loop. */
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 45s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.group:hover .marquee-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
