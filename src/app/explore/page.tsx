@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/product-card";
-import { isConfigured } from "@/lib/env";
+import { isSupabaseConfigured } from "@/lib/env";
 import { occasions } from "@/lib/occasions";
 import { createClient } from "@/lib/supabase/server";
 import type { Product } from "@/types/database.types";
@@ -27,7 +27,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   let products: Product[] | null = null;
   let error: { message: string } | null = null;
 
-  if (isConfigured) {
+  if (isSupabaseConfigured) {
     const supabase = await createClient();
     let query = supabase
       .from("products")
