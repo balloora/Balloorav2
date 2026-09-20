@@ -73,7 +73,7 @@ export default function HomePage() {
         {/* Occasions band — pinned to the bottom of the hero. A swipe carousel on
             mobile; a centered wrapped row on larger screens. */}
         <div className="relative z-10">
-          <div className="hide-scrollbar mx-auto flex max-w-7xl snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 pt-2 sm:px-6 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-10">
+          <div className="hide-scrollbar mx-auto flex max-w-7xl snap-x snap-proximity scroll-pl-4 gap-3 overflow-x-auto px-4 pb-8 pt-2 sm:scroll-pl-6 sm:px-6 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-10">
             {occasions.map((o) => (
               <Link
                 key={o.slug}
