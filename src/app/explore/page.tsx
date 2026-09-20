@@ -25,7 +25,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   // Skip the network call entirely when Supabase isn't configured (placeholder
   // env), otherwise every navigation blocks on a request that can only time out.
   let products: Product[] | null = null;
-  let error: unknown = null;
+  let error: { message: string } | null = null;
 
   if (isConfigured) {
     const supabase = await createClient();
