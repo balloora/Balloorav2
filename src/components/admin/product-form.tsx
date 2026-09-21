@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { saveProduct } from "@/app/admin/actions";
+import { occasions } from "@/lib/occasions";
 import type { Product } from "@/types/database.types";
 
 const inputClass =
@@ -32,6 +33,7 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
       ? [product.image_url]
       : [];
   const [keptImages, setKeptImages] = useState<string[]>(initialImages);
+  const [category, setCategory] = useState<string>(product?.category ?? "");
 
   return (
     <form action={saveProduct} className="max-w-2xl space-y-6">
@@ -46,26 +48,57 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
         <input id="title" name="title" required defaultValue={product?.title} className={inputClass} style={inputStyle} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="slug" className="mb-1 block text-sm font-medium">
-            Slug
-          </label>
-          <input
-            id="slug"
-            name="slug"
-            defaultValue={product?.slug}
-            placeholder="auto-generated from title"
-            className={inputClass}
-            style={inputStyle}
-          />
+      <div>
+        <label htmlFor="slug" className="mb-1 block text-sm font-medium">
+          Slug
+        </label>
+        <input
+          id="slug"
+          name="slug"
+          defaultValue={product?.slug}
+          placeholder="auto-generated from title"
+          className={inputClass}
+          style={inputStyle}
+        />
+      </div>
+
+      <div>
+        <span className="mb-2 block text-sm font-medium">Category</span>
+        <input type="hidden" name="category" value={category} />
+        <div className="flex flex-wrap gap-2">
+          {occasions.map((o) => {
+            const selected = category === o.name;
+            return (
+              <button
+                key={o.slug}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setCategory(selected ? "" : o.name)}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                  selected
+                    ? "bg-gold-500 border-gold-500 text-white"
+                    : "hover:bg-cream-100 text-ink"
+                }`}
+                style={selected ? undefined : inputStyle}
+              >
+                <span className={`[&>svg]:h-4 [&>svg]:w-4 ${selected ? "text-white" : "text-gold-600"}`}>
+                  {o.icon}
+                </span>
+                {o.name}
+              </button>
+            );
+          })}
         </div>
-        <div>
-          <label htmlFor="category" className="mb-1 block text-sm font-medium">
-            Category
-          </label>
-          <input id="category" name="category" defaultValue={product?.category ?? ""} className={inputClass} style={inputStyle} />
-        </div>
+        {category && (
+          <button
+            type="button"
+            onClick={() => setCategory("")}
+            className="mt-2 text-xs font-medium hover:underline"
+            style={{ color: "var(--muted)" }}
+          >
+            Clear category
+          </button>
+        )}
       </div>
 
       <div>
