@@ -1,8 +1,8 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { AddToCart } from "@/components/add-to-cart";
+import { ProductGallery } from "@/components/product-gallery";
 import { createClient } from "@/lib/supabase/server";
 import { formatPrice } from "@/lib/utils";
 
@@ -41,27 +41,15 @@ export default async function ProductPage({ params }: PageProps) {
   const product = await getProduct(id);
   if (!product) notFound();
 
+  const galleryImages = product.images?.length
+    ? product.images
+    : product.image_url
+      ? [product.image_url]
+      : [];
+
   return (
     <article className="grid gap-8 md:grid-cols-2">
-      <div
-        className="relative aspect-square w-full overflow-hidden rounded-2xl border"
-        style={{ borderColor: "var(--border)", background: "var(--color-cream-100)" }}
-      >
-        {product.image_url ? (
-          <Image
-            src={product.image_url}
-            alt={product.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-6xl" aria-hidden>
-            🎈
-          </div>
-        )}
-      </div>
+      <ProductGallery images={galleryImages} alt={product.title} />
 
       <div className="flex flex-col gap-4">
         {product.category && (

@@ -105,7 +105,7 @@ export function Navbar() {
               <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
             </svg>
           </Link>
-          <Link href="/#contact" aria-label="Call us" className="hover:text-gold-600 hidden sm:block">
+          <a href="tel:+15550102030" aria-label="Call us" className="hover:text-gold-600 block">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path
                 d="M5 4h3l1.5 4L7.5 9.5a11 11 0 0 0 5 5l1.5-2L18 14v3a2 2 0 0 1-2 2A13 13 0 0 1 3 6a2 2 0 0 1 2-2Z"
@@ -114,7 +114,7 @@ export function Navbar() {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </a>
           <Link href="/cart" aria-label="Cart" className="hover:text-gold-600 relative">
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path
@@ -181,6 +181,21 @@ export function Navbar() {
                 </Link>
               );
             })}
+            <a
+              href="tel:+15550102030"
+              className="hover:bg-cream-100 flex items-center gap-2 rounded-lg px-3 py-2"
+              onClick={() => setMobileOpen(false)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="text-gold-600">
+                <path
+                  d="M5 4h3l1.5 4L7.5 9.5a11 11 0 0 0 5 5l1.5-2L18 14v3a2 2 0 0 1-2 2A13 13 0 0 1 3 6a2 2 0 0 1 2-2Z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Call +1 (555) 010-2030
+            </a>
             <Link
               href="/#contact"
               className="bg-gold-500 mt-2 rounded-lg px-3 py-2.5 text-center text-white"

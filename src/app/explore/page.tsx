@@ -51,11 +51,11 @@ export default async function ExplorePage({ searchParams }: PageProps) {
         <h1 className="mt-1 text-4xl font-bold">{activeOccasion ? activeOccasion.name : "Explore"}</h1>
       </header>
 
-      {/* Occasion filters */}
-      <div className="mb-10 flex flex-wrap gap-2">
+      {/* Occasion filters — horizontal scroll on mobile, wraps on larger screens */}
+      <div className="hide-scrollbar -mx-4 mb-10 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         <Link
           href="/explore"
-          className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+          className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
             activeOccasion ? "hover:bg-cream-100" : "bg-gold-500 border-gold-500 text-white"
           }`}
           style={activeOccasion ? { borderColor: "var(--border)" } : undefined}
@@ -68,7 +68,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
             <Link
               key={o.slug}
               href={`/explore?occasion=${o.slug}`}
-              className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+              className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 active ? "bg-gold-500 border-gold-500 text-white" : "hover:bg-cream-100"
               }`}
               style={active ? undefined : { borderColor: "var(--border)" }}
