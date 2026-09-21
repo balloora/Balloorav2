@@ -1,8 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { occasions } from "@/lib/occasions";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  // The /admin area has its own chrome — no marketing footer there.
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer id="contact" className="bg-cream-100 mt-24 border-t" style={{ borderColor: "var(--border)" }}>
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-10">

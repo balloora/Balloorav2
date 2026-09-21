@@ -19,6 +19,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   const isHome = pathname === "/";
+  const isAdmin = pathname.startsWith("/admin");
 
   // On the homepage the header floats over the full-screen hero (transparent,
   // light text) and turns solid once the user scrolls past it.
@@ -38,6 +39,9 @@ export function Navbar() {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   };
+
+  // The /admin area has its own chrome — hide the marketing header there.
+  if (isAdmin) return null;
 
   return (
     <header

@@ -21,8 +21,10 @@ const CLIENT_FALLBACK = {
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_placeholder",
 } as const;
 
+// Stripe secrets are validated together (needed for checkout + webhooks), and
+// kept SEPARATE from the Supabase service-role key so that features which only
+// need Supabase (e.g. the admin panel) don't require Stripe to be configured.
 const serverSchema = z.object({
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
 });
@@ -95,7 +97,6 @@ export function serverEnv(): z.infer<typeof serverSchema> {
   if (cachedServerEnv) return cachedServerEnv;
 
   const parsed = serverSchema.safeParse({
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   });
@@ -108,4 +109,22 @@ export function serverEnv(): z.infer<typeof serverSchema> {
 
   cachedServerEnv = parsed.data;
   return cachedServerEnv;
+}
+
+/**
+ * The Supabase service_role key (server-only). Validated independently of the
+ * Stripe secrets so Supabase-only features work without Stripe configured.
+ * Throws if missing or called in the browser.
+ */
+export function supabaseServiceRoleKey(): string {
+  if (typeof window !== "undefined") {
+    throw new Error("supabaseServiceRoleKey() must not be called in the browser.");
+  }
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key || key.length === 0) {
+    throw new Error(
+      "❌ Missing SUPABASE_SERVICE_ROLE_KEY — required for admin/server database writes.",
+    );
+  }
+  return key;
 }

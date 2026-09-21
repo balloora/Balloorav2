@@ -43,13 +43,14 @@ export interface Database {
       products: {
         Row: {
           id: string;
-          seller_id: string;
+          seller_id: string | null;
           title: string;
           slug: string;
           description: string | null;
           price_cents: number;
           currency: string;
           image_url: string | null;
+          images: string[];
           category: string | null;
           inventory: number;
           status: "draft" | "active" | "archived";
@@ -58,13 +59,14 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          seller_id: string;
+          seller_id?: string | null;
           title: string;
           slug: string;
           description?: string | null;
           price_cents: number;
           currency?: string;
           image_url?: string | null;
+          images?: string[];
           category?: string | null;
           inventory?: number;
           status?: "draft" | "active" | "archived";
@@ -73,13 +75,14 @@ export interface Database {
         };
         Update: {
           id?: string;
-          seller_id?: string;
+          seller_id?: string | null;
           title?: string;
           slug?: string;
           description?: string | null;
           price_cents?: number;
           currency?: string;
           image_url?: string | null;
+          images?: string[];
           category?: string | null;
           inventory?: number;
           status?: "draft" | "active" | "archived";
