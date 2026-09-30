@@ -13,6 +13,8 @@ export interface CartItem {
 
 interface CartContextValue {
   items: CartItem[];
+  /** False until the saved cart has been read from localStorage. */
+  hydrated: boolean;
   itemCount: number;
   subtotalCents: number;
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
@@ -56,6 +58,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     return {
       items,
+      hydrated,
       itemCount,
       subtotalCents,
       addItem(item, quantity = 1) {
@@ -83,7 +86,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems([]);
       },
     };
-  }, [items]);
+  }, [items, hydrated]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

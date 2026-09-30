@@ -83,7 +83,17 @@ export async function POST(request: Request) {
     return sum + product.price_cents * item.quantity;
   }, 0);
 
-  const stripe = getStripe();
+  // Fail with a readable JSON error (not an empty 500) when keys are missing.
+  let stripe: ReturnType<typeof getStripe>;
+  try {
+    stripe = getStripe();
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Payments aren't set up yet. Please try again later or contact us to order." },
+      { status: 503 },
+    );
+  }
 
   // Record a pending order first so the webhook can reconcile it later.
   const { data: order, error: orderError } = await admin
