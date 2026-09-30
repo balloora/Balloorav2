@@ -19,7 +19,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-16">
       <div
-        className="w-full max-w-sm rounded-2xl border bg-white p-8 shadow-sm"
+        className="w-full max-w-sm rounded-2xl border bg-white p-6 shadow-sm sm:p-8"
         style={{ borderColor: "var(--border)" }}
       >
         <p className="text-gold-600 font-serif text-2xl font-bold">Balloora</p>
@@ -50,7 +50,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
               autoComplete="current-password"
               required
               disabled={!configured}
-              className="focus:border-gold-400 focus:ring-gold-200 w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2 disabled:opacity-50"
+              className="focus:border-gold-400 focus:ring-gold-200 w-full rounded-lg border px-3 py-2.5 text-base outline-none focus:ring-2 disabled:opacity-50 sm:text-sm"
               style={{ borderColor: "var(--border)" }}
             />
           </div>

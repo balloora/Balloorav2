@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { deleteProduct } from "@/app/admin/actions";
+import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/env";
 import { formatPrice } from "@/lib/utils";
@@ -30,7 +30,7 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Products</h1>
           <p className="text-sm" style={{ color: "var(--muted)" }}>
@@ -39,9 +39,9 @@ export default async function AdminDashboard() {
         </div>
         <Link
           href="/admin/products/new"
-          className="bg-gold-500 hover:bg-gold-600 rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-colors"
+          className="bg-gold-500 hover:bg-gold-600 shrink-0 rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-colors"
         >
-          + New product
+          + New<span className="hidden sm:inline"> product</span>
         </Link>
       </div>
 
@@ -62,15 +62,55 @@ export default async function AdminDashboard() {
         </div>
       )}
 
+      {/* Phones: one card per product */}
       {products.length > 0 && (
-        <div className="overflow-hidden rounded-xl border bg-white" style={{ borderColor: "var(--border)" }}>
+        <ul className="space-y-3 md:hidden">
+          {products.map((p) => (
+            <li key={p.id} className="rounded-xl border bg-white p-3" style={{ borderColor: "var(--border)" }}>
+              <Link href={`/admin/products/${p.id}`} className="flex gap-3">
+                <div className="bg-cream-100 relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                  {p.image_url && <Image src={p.image_url} alt="" fill sizes="64px" className="object-cover" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="line-clamp-2 font-medium">{p.title}</p>
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[p.status] ?? ""}`}
+                    >
+                      {p.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
+                    {formatPrice(p.price_cents, p.currency)} · {p.inventory} in stock
+                    {p.category ? ` · ${p.category}` : ""}
+                  </p>
+                </div>
+              </Link>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Link
+                  href={`/admin/products/${p.id}`}
+                  className="hover:bg-cream-100 rounded-lg border py-2.5 text-center text-sm font-medium transition-colors"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  Edit
+                </Link>
+                <DeleteProductButton id={p.id} title={p.title} className="w-full py-2.5 text-sm" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Tablet & desktop: table */}
+      {products.length > 0 && (
+        <div className="hidden overflow-hidden rounded-xl border bg-white md:block" style={{ borderColor: "var(--border)" }}>
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
                 <th className="px-4 py-3 font-medium">Product</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">Category</th>
+                <th className="px-4 py-3 font-medium">Category</th>
                 <th className="px-4 py-3 font-medium">Price</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">Stock</th>
+                <th className="px-4 py-3 font-medium">Stock</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -93,11 +133,11 @@ export default async function AdminDashboard() {
                       </div>
                     </div>
                   </td>
-                  <td className="hidden px-4 py-3 sm:table-cell" style={{ color: "var(--muted)" }}>
+                  <td className="px-4 py-3" style={{ color: "var(--muted)" }}>
                     {p.category ?? "—"}
                   </td>
                   <td className="px-4 py-3">{formatPrice(p.price_cents, p.currency)}</td>
-                  <td className="hidden px-4 py-3 sm:table-cell" style={{ color: "var(--muted)" }}>
+                  <td className="px-4 py-3" style={{ color: "var(--muted)" }}>
                     {p.inventory}
                   </td>
                   <td className="px-4 py-3">
@@ -114,15 +154,7 @@ export default async function AdminDashboard() {
                       >
                         Edit
                       </Link>
-                      <form action={deleteProduct}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <button
-                          type="submit"
-                          className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      <DeleteProductButton id={p.id} title={p.title} className="px-3 py-1.5 text-xs" />
                     </div>
                   </td>
                 </tr>
