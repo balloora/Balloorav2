@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { saveProduct } from "@/app/admin/actions";
+import { normalizeImage } from "@/lib/normalize-image";
 import { occasions } from "@/lib/occasions";
 import type { Product } from "@/types/database.types";
 
@@ -13,15 +14,15 @@ const inputClass =
   "focus:border-gold-400 focus:ring-gold-200 w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2";
 const inputStyle = { borderColor: "var(--border)" } as const;
 
-function SubmitButton() {
+function SubmitButton({ processing }: { processing: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || processing}
       className="bg-gold-500 hover:bg-gold-600 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-60"
     >
-      {pending ? "Saving…" : "Save product"}
+      {processing ? "Preparing images…" : pending ? "Saving…" : "Save product"}
     </button>
   );
 }
@@ -34,6 +35,29 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
       : [];
   const [keptImages, setKeptImages] = useState<string[]>(initialImages);
   const [category, setCategory] = useState<string>(product?.category ?? "");
+  const [processingImages, setProcessingImages] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  // Convert picked files (incl. HEIC) to compact WebP before the form submits.
+  async function handleImagesChange(e: ChangeEvent<HTMLInputElement>) {
+    const input = e.currentTarget;
+    const files = Array.from(input.files ?? []);
+    if (files.length === 0) return;
+
+    setProcessingImages(true);
+    setImageError(null);
+    try {
+      const converted = await Promise.all(files.map(normalizeImage));
+      const dt = new DataTransfer();
+      converted.forEach((f) => dt.items.add(f));
+      input.files = dt.files;
+    } catch {
+      input.value = "";
+      setImageError("One of those images couldn't be read. Try exporting it as JPEG or PNG.");
+    } finally {
+      setProcessingImages(false);
+    }
+  }
 
   return (
     <form action={saveProduct} className="max-w-2xl space-y-6">
@@ -189,14 +213,16 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
         <input
           type="file"
           name="images"
-          accept="image/*"
+          accept="image/*,.heic,.heif"
           multiple
+          onChange={handleImagesChange}
           className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-cream-100 file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-cream-200"
         />
+        {imageError && <p className="mt-2 text-sm text-red-600">{imageError}</p>}
       </div>
 
       <div className="flex items-center gap-3 pt-2">
-        <SubmitButton />
+        <SubmitButton processing={processingImages} />
         <Link href="/admin" className="text-sm font-medium hover:underline" style={{ color: "var(--muted)" }}>
           Cancel
         </Link>

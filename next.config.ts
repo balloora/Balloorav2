@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Admin product form uploads images through a Server Action (default cap is 1 MB).
+    // Images are compressed in the browser first; this is headroom for several at once.
+    serverActions: { bodySizeLimit: "10mb" },
+  },
   async redirects() {
     return [
       // The shop catalog now lives at /explore.

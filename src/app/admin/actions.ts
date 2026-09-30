@@ -41,6 +41,18 @@ export async function logout(): Promise<void> {
 }
 
 // ------------------------------------------------------------- Product actions
+const MIME_BY_EXT: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  gif: "image/gif",
+  avif: "image/avif",
+  svg: "image/svg+xml",
+  heic: "image/heic",
+  heif: "image/heif",
+};
+
 async function uploadImages(slug: string, files: File[]): Promise<string[]> {
   const supabase = createAdminClient();
   const urls: string[] = [];
@@ -52,7 +64,7 @@ async function uploadImages(slug: string, files: File[]): Promise<string[]> {
     const bytes = Buffer.from(await file.arrayBuffer());
 
     const { error } = await supabase.storage.from(BUCKET).upload(path, bytes, {
-      contentType: file.type || "image/jpeg",
+      contentType: file.type || MIME_BY_EXT[ext] || "application/octet-stream",
       upsert: false,
     });
     if (error) throw new Error(`Image upload failed: ${error.message}`);
