@@ -104,42 +104,9 @@ export async function HomeShowcase() {
 
   return (
     <section className="mx-auto max-w-7xl space-y-24 px-4 py-20 sm:px-6 lg:space-y-32 lg:px-10 lg:py-28">
-      {/* Products: text left, showcase right */}
-      {products.length > 0 && (
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div>
-            <p className="text-gold-600 text-sm font-medium tracking-[0.2em] uppercase">Shop</p>
-            <h2 className="mt-3 font-serif text-3xl leading-tight font-semibold sm:text-5xl">
-              Ready-to-celebrate décor
-            </h2>
-            <p className="mt-5 max-w-lg text-lg leading-relaxed" style={{ color: "var(--muted)" }}>
-              Balloons, blooms and finishing touches you can order online in a few clicks. Pick your
-              favourites, check out securely, and you&apos;re ready for the party.
-            </p>
-            <CheckList
-              points={[
-                "Designs for every occasion",
-                "Secure checkout powered by Stripe",
-                "Want different colours or sizing? Just ask",
-              ]}
-            />
-            <Link
-              href="/products"
-              className="bg-gold-500 hover:bg-gold-600 group mt-9 inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-medium text-white transition-colors"
-            >
-              Shop products
-              <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
-                →
-              </span>
-            </Link>
-          </div>
-          <ScrollingColumns items={products} />
-        </div>
-      )}
-
-      {/* Services: showcase left, text right */}
+      {/* Services: text left, showcase right */}
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-        <div className="lg:order-2">
+        <div>
           <p className="text-gold-600 text-sm font-medium tracking-[0.2em] uppercase">Services</p>
           <h2 className="mt-3 font-serif text-3xl leading-tight font-semibold sm:text-5xl">
             Full event styling, designed with you
@@ -174,10 +141,43 @@ export async function HomeShowcase() {
             </a>
           </div>
         </div>
-        <div className="lg:order-1">
-          <ScrollingColumns items={serviceItems} />
-        </div>
+        <ScrollingColumns items={serviceItems} />
       </div>
+
+      {/* Products: showcase left, text right */}
+      {products.length > 0 && (
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="lg:order-2">
+            <p className="text-gold-600 text-sm font-medium tracking-[0.2em] uppercase">Shop</p>
+            <h2 className="mt-3 font-serif text-3xl leading-tight font-semibold sm:text-5xl">
+              Ready-to-celebrate décor
+            </h2>
+            <p className="mt-5 max-w-lg text-lg leading-relaxed" style={{ color: "var(--muted)" }}>
+              Balloons, blooms and finishing touches you can order online in a few clicks. Pick your
+              favourites, check out securely, and you&apos;re ready for the party.
+            </p>
+            <CheckList
+              points={[
+                "Designs for every occasion",
+                "Secure checkout powered by Stripe",
+                "Want different colours or sizing? Just ask",
+              ]}
+            />
+            <Link
+              href="/products"
+              className="bg-gold-500 hover:bg-gold-600 group mt-9 inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-medium text-white transition-colors"
+            >
+              Shop products
+              <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </Link>
+          </div>
+          <div className="lg:order-1">
+            <ScrollingColumns items={products} />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

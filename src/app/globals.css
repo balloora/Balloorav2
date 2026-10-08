@@ -108,12 +108,12 @@ h3,
   }
 }
 
-@keyframes flow-grow {
+@keyframes flow-grow-x {
   from {
-    transform: scaleY(0);
+    transform: scaleX(0);
   }
   to {
-    transform: scaleY(1);
+    transform: scaleX(1);
   }
 }
 
@@ -124,10 +124,10 @@ h3,
     animation-range: entry 0% cover 30%;
   }
 
-  .flow-fill {
-    animation: flow-grow linear both;
+  .flow-fill-x {
+    animation: flow-grow-x linear both;
     animation-timeline: view();
-    animation-range: cover 10% cover 70%;
+    animation-range: entry 20% cover 55%;
   }
 }
 
@@ -145,7 +145,7 @@ h3,
     animation: none !important;
   }
 
-  .flow-fill {
+  .flow-fill-x {
     animation: none !important;
     transform: none;
   }
