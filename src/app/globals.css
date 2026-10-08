@@ -150,3 +150,10 @@ h3,
     transform: none;
   }
 }
+
+/* Smooth in-page jumps (e.g. the hero's scroll arrow), unless reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

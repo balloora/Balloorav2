@@ -31,7 +31,7 @@ const promises = [
 
 export function AboutFlow() {
   return (
-    <section id="about" className="bg-cream-50 relative isolate overflow-hidden border-y" style={{ borderColor: "var(--border)" }}>
+    <section id="about" className="bg-cream-50 relative isolate scroll-mt-20 overflow-hidden border-y" style={{ borderColor: "var(--border)" }}>
       {/* Soft glow accents */}
       <div aria-hidden className="bg-gold-200/40 absolute -top-32 -left-32 -z-10 h-80 w-80 rounded-full blur-3xl" />
       <div aria-hidden className="bg-gold-100/60 absolute -right-40 -bottom-20 -z-10 h-96 w-96 rounded-full blur-3xl" />

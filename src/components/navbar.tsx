@@ -100,12 +100,6 @@ export function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link href="/products" aria-label="Search" className="hover:text-gold-600 hidden sm:block">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.7" />
-              <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            </svg>
-          </Link>
           <a href="tel:+14372611195" aria-label="Call us" className="hover:text-gold-600 block">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path

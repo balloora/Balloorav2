@@ -3,13 +3,10 @@ import Link from "next/link";
 
 import { AboutFlow } from "@/components/about-flow";
 import { HomeShowcase } from "@/components/home-showcase";
-import { getCategories } from "@/lib/categories";
 
 export const revalidate = 60;
 
-export default async function HomePage() {
-  const categories = await getCategories();
-
+export default function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- Hero */}
@@ -73,20 +70,17 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Categories band — pinned to the bottom of the hero. A swipe carousel on
-            mobile; a centered wrapped row on larger screens. */}
-        <div className="relative z-10">
-          <div className="hide-scrollbar mx-auto flex max-w-7xl snap-x snap-proximity scroll-pl-4 gap-3 overflow-x-auto px-4 pb-8 pt-2 sm:scroll-pl-6 sm:px-6 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-10">
-            {categories.map((c) => (
-              <Link
-                key={c.id}
-                href={`/products?occasion=${c.slug}`}
-                className="inline-flex shrink-0 snap-start items-center rounded-full border border-white/15 bg-white/[0.07] px-5 py-2.5 text-sm font-medium whitespace-nowrap text-white/90 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/15 hover:text-white"
-              >
-                {c.name}
-              </Link>
-            ))}
-          </div>
+        {/* Scroll cue — pinned to the bottom of the hero. */}
+        <div className="relative z-10 flex justify-center pb-8">
+          <a
+            href="#about"
+            aria-label="Scroll down"
+            className="flex h-12 w-12 animate-bounce items-center justify-center rounded-full border border-white/25 bg-white/10 text-white/90 backdrop-blur-md transition-colors hover:bg-white/20 hover:text-white"
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 5v14M6 13l6 6 6-6" />
+            </svg>
+          </a>
         </div>
       </section>
 
