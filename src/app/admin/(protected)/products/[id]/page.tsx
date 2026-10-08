@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductForm } from "@/components/admin/product-form";
+import { countHomepageProducts } from "@/lib/admin-queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Edit Product" };
@@ -21,13 +22,18 @@ export default async function EditProductPage({ params, searchParams }: PageProp
   const { data: product } = await supabase.from("products").select("*").eq("id", id).single();
   if (!product) notFound();
 
+  const [{ data: categories }, homepageCount] = await Promise.all([
+    supabase.from("categories").select("*").order("sort_order").order("name"),
+    countHomepageProducts(product.id),
+  ]);
+
   return (
     <div>
       <Link href="/admin" className="text-gold-600 text-sm font-medium hover:underline">
         ← Back to products
       </Link>
       <h1 className="mt-3 mb-6 text-2xl font-bold">Edit product</h1>
-      <ProductForm product={product} error={error} />
+      <ProductForm categories={categories ?? []} homepageCount={homepageCount} product={product} error={error} />
     </div>
   );
 }

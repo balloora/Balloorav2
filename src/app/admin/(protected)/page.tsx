@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/env";
+import { HOMEPAGE_PRODUCTS_MAX, HOMEPAGE_PRODUCTS_MIN } from "@/lib/homepage";
 import { formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +29,10 @@ export default async function AdminDashboard() {
     }
   }
 
+  const onHomepage = (p: (typeof products)[number]) => p.show_on_homepage && p.status === "active" && !!p.image_url;
+  const homepageCount = products.filter(onHomepage).length;
+  const homepageOk = homepageCount >= HOMEPAGE_PRODUCTS_MIN && homepageCount <= HOMEPAGE_PRODUCTS_MAX;
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -44,6 +49,23 @@ export default async function AdminDashboard() {
           + New<span className="hidden sm:inline"> product</span>
         </Link>
       </div>
+
+      {!loadError && products.length > 0 && (
+        <p
+          className={`mb-4 rounded-xl px-4 py-3 text-sm ${homepageOk ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"}`}
+        >
+          <span className="font-medium">
+            {homepageCount} {homepageCount === 1 ? "product" : "products"} on the homepage.
+          </span>{" "}
+          {homepageCount === 0
+            ? "The homepage Shop section is hidden. Tick “Show in homepage preview” on a product to add it."
+            : homepageCount < HOMEPAGE_PRODUCTS_MIN
+              ? `Add at least ${HOMEPAGE_PRODUCTS_MIN - homepageCount} more so photos don't visibly repeat.`
+              : homepageCount > HOMEPAGE_PRODUCTS_MAX
+                ? `Only the ${HOMEPAGE_PRODUCTS_MAX} newest are shown. Untick ${homepageCount - HOMEPAGE_PRODUCTS_MAX} to choose exactly which.`
+                : `${HOMEPAGE_PRODUCTS_MIN}–${HOMEPAGE_PRODUCTS_MAX} recommended.`}
+        </p>
+      )}
 
       {loadError && (
         <p className="rounded-xl border border-dashed p-6 text-sm" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
@@ -74,11 +96,16 @@ export default async function AdminDashboard() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <p className="line-clamp-2 font-medium">{p.title}</p>
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[p.status] ?? ""}`}
-                    >
-                      {p.status}
-                    </span>
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[p.status] ?? ""}`}
+                      >
+                        {p.status}
+                      </span>
+                      {onHomepage(p) && (
+                      <span className="bg-gold-50 text-gold-700 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium">Homepage</span>
+                    )}
+                    </div>
                   </div>
                   <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
                     {formatPrice(p.price_cents, p.currency)} · {p.inventory} in stock
@@ -141,9 +168,14 @@ export default async function AdminDashboard() {
                     {p.inventory}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[p.status] ?? ""}`}>
-                      {p.status}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[p.status] ?? ""}`}>
+                        {p.status}
+                      </span>
+                      {onHomepage(p) && (
+                      <span className="bg-gold-50 text-gold-700 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium">Homepage</span>
+                    )}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">

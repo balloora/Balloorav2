@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { featuredDesigns } from "@/lib/designs";
 import { isSupabaseConfigured } from "@/lib/env";
+import { HOMEPAGE_PRODUCTS_MAX } from "@/lib/homepage";
 import { quoteMailto } from "@/lib/services";
 import { createClient } from "@/lib/supabase/server";
 import { formatPrice } from "@/lib/utils";
@@ -79,9 +80,10 @@ async function loadProducts(): Promise<ShowcaseItem[]> {
     .from("products")
     .select("id, title, price_cents, currency, image_url")
     .eq("status", "active")
+    .eq("show_on_homepage", true)
     .not("image_url", "is", null)
     .order("created_at", { ascending: false })
-    .limit(12);
+    .limit(HOMEPAGE_PRODUCTS_MAX);
   return (data ?? []).map((p) => ({
     key: p.id,
     href: `/products/${p.id}`,

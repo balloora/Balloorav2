@@ -3,11 +3,13 @@ import Link from "next/link";
 
 import { AboutFlow } from "@/components/about-flow";
 import { HomeShowcase } from "@/components/home-showcase";
-import { occasions } from "@/lib/occasions";
+import { getCategories } from "@/lib/categories";
 
 export const revalidate = 60;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const categories = await getCategories();
+
   return (
     <>
       {/* ---------------------------------------------------------------- Hero */}
@@ -71,20 +73,17 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Occasions band — pinned to the bottom of the hero. A swipe carousel on
+        {/* Categories band — pinned to the bottom of the hero. A swipe carousel on
             mobile; a centered wrapped row on larger screens. */}
         <div className="relative z-10">
           <div className="hide-scrollbar mx-auto flex max-w-7xl snap-x snap-proximity scroll-pl-4 gap-3 overflow-x-auto px-4 pb-8 pt-2 sm:scroll-pl-6 sm:px-6 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-10">
-            {occasions.map((o) => (
+            {categories.map((c) => (
               <Link
-                key={o.slug}
-                href={`/products?occasion=${o.slug}`}
-                className="group inline-flex shrink-0 snap-start items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.07] py-2.5 pr-5 pl-2.5 text-sm font-medium text-white/90 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/15 hover:text-white"
+                key={c.id}
+                href={`/products?occasion=${c.slug}`}
+                className="inline-flex shrink-0 snap-start items-center rounded-full border border-white/15 bg-white/[0.07] px-5 py-2.5 text-sm font-medium whitespace-nowrap text-white/90 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/15 hover:text-white"
               >
-                <span className="text-gold-200 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-colors group-hover:bg-white/20">
-                  {o.icon}
-                </span>
-                <span className="whitespace-nowrap">{o.name}</span>
+                {c.name}
               </Link>
             ))}
           </div>

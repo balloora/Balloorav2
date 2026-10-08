@@ -6,8 +6,8 @@ import { useFormStatus } from "react-dom";
 
 import { saveProduct } from "@/app/admin/actions";
 import { ImagePicker } from "@/components/admin/image-picker";
-import { occasions } from "@/lib/occasions";
-import type { Product } from "@/types/database.types";
+import { HOMEPAGE_PRODUCTS_MAX, HOMEPAGE_PRODUCTS_MIN } from "@/lib/homepage";
+import type { Category, Product } from "@/types/database.types";
 
 const inputClass =
   "focus:border-gold-400 focus:ring-gold-200 w-full rounded-lg border bg-white px-3 py-2.5 text-base outline-none focus:ring-2 sm:text-sm";
@@ -26,7 +26,18 @@ function SubmitButton({ processing }: { processing: boolean }) {
   );
 }
 
-export function ProductForm({ product, error }: { product?: Product; error?: string }) {
+export function ProductForm({
+  product,
+  categories,
+  homepageCount,
+  error,
+}: {
+  product?: Product;
+  categories: Category[];
+  /** Other products currently in the homepage preview (excluding this one). */
+  homepageCount: number;
+  error?: string;
+}) {
   const initialImages = product?.images?.length
     ? product.images
     : product?.image_url
@@ -34,6 +45,8 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
       : [];
   const [category, setCategory] = useState<string>(product?.category ?? "");
   const [processingImages, setProcessingImages] = useState(false);
+  const [onHomepage, setOnHomepage] = useState(product?.show_on_homepage ?? false);
+  const homepageTotal = homepageCount + (onHomepage ? 1 : 0);
 
   return (
     <form action={saveProduct} className="max-w-2xl space-y-6 pb-4 sm:pb-0">
@@ -66,28 +79,30 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
         <span className="mb-2 block text-sm font-medium">Category</span>
         <input type="hidden" name="category" value={category} />
         <div className="flex flex-wrap gap-2">
-          {occasions.map((o) => {
-            const selected = category === o.name;
+          {categories.map((c) => {
+            const selected = category === c.name;
             return (
               <button
-                key={o.slug}
+                key={c.id}
                 type="button"
                 aria-pressed={selected}
-                onClick={() => setCategory(selected ? "" : o.name)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                  selected
-                    ? "bg-gold-500 border-gold-500 text-white"
-                    : "hover:bg-cream-100 text-ink"
+                onClick={() => setCategory(selected ? "" : c.name)}
+                className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                  selected ? "bg-gold-500 border-gold-500 text-white" : "hover:bg-cream-100 text-ink"
                 }`}
                 style={selected ? undefined : inputStyle}
               >
-                <span className={`[&>svg]:h-4 [&>svg]:w-4 ${selected ? "text-white" : "text-gold-600"}`}>
-                  {o.icon}
-                </span>
-                {o.name}
+                {c.name}
               </button>
             );
           })}
+          <Link
+            href="/admin/categories"
+            className="hover:bg-cream-100 rounded-full border border-dashed px-3.5 py-1.5 text-sm font-medium transition-colors"
+            style={{ ...inputStyle, color: "var(--muted)" }}
+          >
+            Manage categories
+          </Link>
         </div>
         {category && (
           <button
@@ -159,6 +174,42 @@ export function ProductForm({ product, error }: { product?: Product; error?: str
       </div>
 
       <ImagePicker initialImages={initialImages} onProcessingChange={setProcessingImages} />
+
+      {/* Homepage preview */}
+      <div className="rounded-xl border bg-white p-4" style={inputStyle}>
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            name="show_on_homepage"
+            checked={onHomepage}
+            onChange={(e) => setOnHomepage(e.currentTarget.checked)}
+            className="accent-gold-500 mt-0.5 h-5 w-5 shrink-0"
+          />
+          <span>
+            <span className="block text-sm font-medium">Show in homepage preview</span>
+            <span className="mt-0.5 block text-xs" style={{ color: "var(--muted)" }}>
+              Appears in the scrolling Shop section on the homepage. Needs Active status and at least
+              one photo.
+            </span>
+          </span>
+        </label>
+        <p
+          className={`mt-3 rounded-lg px-3 py-2 text-xs ${
+            homepageTotal < HOMEPAGE_PRODUCTS_MIN || homepageTotal > HOMEPAGE_PRODUCTS_MAX
+              ? "bg-amber-50 text-amber-800"
+              : "bg-green-50 text-green-800"
+          }`}
+        >
+          {homepageTotal} {homepageTotal === 1 ? "product" : "products"} on the homepage after saving.{" "}
+          {homepageTotal === 0
+            ? "The Shop section will be hidden."
+            : homepageTotal < HOMEPAGE_PRODUCTS_MIN
+              ? `Pick at least ${HOMEPAGE_PRODUCTS_MIN} so photos don't visibly repeat.`
+              : homepageTotal > HOMEPAGE_PRODUCTS_MAX
+                ? `Only the ${HOMEPAGE_PRODUCTS_MAX} newest will be shown.`
+                : `Looks good (${HOMEPAGE_PRODUCTS_MIN}–${HOMEPAGE_PRODUCTS_MAX} recommended).`}
+        </p>
+      </div>
 
       {/* Pinned to the bottom of the screen on phones so Save is always in reach */}
       <div

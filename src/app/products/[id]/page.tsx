@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/add-to-cart";
 import { ProductCard } from "@/components/product-card";
 import { ProductGallery } from "@/components/product-gallery";
-import { occasions } from "@/lib/occasions";
+import { getCategories } from "@/lib/categories";
 import { createClient } from "@/lib/supabase/server";
 import { formatPrice } from "@/lib/utils";
 
@@ -95,7 +95,7 @@ export default async function ProductPage({ params }: PageProps) {
   if (!product) notFound();
 
   const related = await getRelated(product.id, product.category);
-  const occasion = occasions.find((o) => o.name === product.category);
+  const occasion = (await getCategories()).find((c) => c.name === product.category);
 
   const galleryImages = product.images?.length
     ? product.images
@@ -147,7 +147,6 @@ export default async function ProductPage({ params }: PageProps) {
               href={occasion ? `/products?occasion=${occasion.slug}` : "/products"}
               className="bg-gold-50 text-gold-700 hover:bg-gold-100 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tracking-wide uppercase transition-colors"
             >
-              {occasion && <span className="[&>svg]:h-3.5 [&>svg]:w-3.5">{occasion.icon}</span>}
               {product.category}
             </Link>
           )}

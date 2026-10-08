@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/product-card";
+import { getCategories } from "@/lib/categories";
 import { isSupabaseConfigured } from "@/lib/env";
-import { occasions } from "@/lib/occasions";
 import { createClient } from "@/lib/supabase/server";
 import type { Product } from "@/types/database.types";
 
@@ -20,7 +20,8 @@ interface PageProps {
 
 export default async function ProductsPage({ searchParams }: PageProps) {
   const { occasion } = await searchParams;
-  const activeOccasion = occasions.find((o) => o.slug === occasion);
+  const categories = await getCategories();
+  const activeOccasion = categories.find((c) => c.slug === occasion);
 
   // Skip the network call entirely when Supabase isn't configured (placeholder
   // env), otherwise every navigation blocks on a request that can only time out.
@@ -62,11 +63,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         >
           All
         </Link>
-        {occasions.map((o) => {
+        {categories.map((o) => {
           const active = o.slug === occasion;
           return (
             <Link
-              key={o.slug}
+              key={o.id}
               href={`/products?occasion=${o.slug}`}
               className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 active ? "bg-gold-500 border-gold-500 text-white" : "hover:bg-cream-100"

@@ -7,18 +7,22 @@ export function DeleteProductButton({
   title,
   className,
   action = deleteProduct,
+  warning,
 }: {
   id: string;
   title: string;
   className?: string;
   /** Server action that deletes by `id` (defaults to deleting a product). */
   action?: (formData: FormData) => Promise<void>;
+  /** Extra sentence shown in the confirm dialog. */
+  warning?: string;
 }) {
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!confirm(`Delete “${title}”? This can't be undone.`)) e.preventDefault();
+        const extra = warning ? ` ${warning}` : "";
+        if (!confirm(`Delete “${title}”?${extra} This can't be undone.`)) e.preventDefault();
       }}
     >
       <input type="hidden" name="id" value={id} />

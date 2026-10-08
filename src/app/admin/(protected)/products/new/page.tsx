@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductForm } from "@/components/admin/product-form";
+import { countHomepageProducts } from "@/lib/admin-queries";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "New Product" };
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   searchParams: Promise<{ error?: string }>;
@@ -11,13 +14,18 @@ interface PageProps {
 
 export default async function NewProductPage({ searchParams }: PageProps) {
   const { error } = await searchParams;
+  const supabase = createAdminClient();
+  const [{ data: categories }, homepageCount] = await Promise.all([
+    supabase.from("categories").select("*").order("sort_order").order("name"),
+    countHomepageProducts(),
+  ]);
   return (
     <div>
       <Link href="/admin" className="text-gold-600 text-sm font-medium hover:underline">
         ← Back to products
       </Link>
       <h1 className="mt-3 mb-6 text-2xl font-bold">New product</h1>
-      <ProductForm error={error} />
+      <ProductForm categories={categories ?? []} homepageCount={homepageCount} error={error} />
     </div>
   );
 }

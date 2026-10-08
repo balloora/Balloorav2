@@ -51,6 +51,7 @@ export interface Database {
           currency: string;
           image_url: string | null;
           images: string[];
+          show_on_homepage: boolean;
           category: string | null;
           inventory: number;
           status: "draft" | "active" | "archived";
@@ -67,6 +68,7 @@ export interface Database {
           currency?: string;
           image_url?: string | null;
           images?: string[];
+          show_on_homepage?: boolean;
           category?: string | null;
           inventory?: number;
           status?: "draft" | "active" | "archived";
@@ -83,6 +85,7 @@ export interface Database {
           currency?: string;
           image_url?: string | null;
           images?: string[];
+          show_on_homepage?: boolean;
           category?: string | null;
           inventory?: number;
           status?: "draft" | "active" | "archived";
@@ -97,6 +100,30 @@ export interface Database {
             referencedColumns: ["id"];
           },
         ];
+      };
+      categories: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          slug: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          slug?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
       };
       services: {
         Row: {
@@ -233,6 +260,7 @@ export interface Database {
 }
 
 export type Product = Database["public"]["Tables"]["products"]["Row"];
+export type Category = Database["public"]["Tables"]["categories"]["Row"];
 export type Service = Database["public"]["Tables"]["services"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];

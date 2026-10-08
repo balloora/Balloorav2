@@ -4,6 +4,7 @@ import { Great_Vibes, Playfair_Display, Poppins } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { SiteFooter } from "@/components/site-footer";
 import { CartProvider } from "@/lib/cart-context";
+import { getCategories } from "@/lib/categories";
 import { env } from "@/lib/env";
 
 import "./globals.css";
@@ -45,7 +46,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const categories = await getCategories();
+
   return (
     <html lang="en">
       <body
@@ -54,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CartProvider>
           <Navbar />
           <main>{children}</main>
-          <SiteFooter />
+          <SiteFooter categories={categories.map(({ id, name, slug }) => ({ id, name, slug }))} />
         </CartProvider>
       </body>
     </html>

@@ -87,6 +87,7 @@ export async function saveProduct(formData: FormData): Promise<void> {
   const status = String(formData.get("status") ?? "draft") as "draft" | "active" | "archived";
   const priceDollars = Number(formData.get("price") ?? 0);
   const inventory = Number(formData.get("inventory") ?? 0);
+  const showOnHomepage = formData.get("show_on_homepage") === "on";
 
   if (!title) redirect(`/admin/products/${id || "new"}?error=${encodeURIComponent("Title is required")}`);
 
@@ -117,6 +118,7 @@ export async function saveProduct(formData: FormData): Promise<void> {
     inventory: Number.isFinite(inventory) ? Math.max(0, Math.trunc(inventory)) : 0,
     images,
     image_url: imageUrl,
+    show_on_homepage: showOnHomepage,
   };
 
   let dbError: string | null = null;
@@ -134,6 +136,7 @@ export async function saveProduct(formData: FormData): Promise<void> {
 
   revalidatePath("/admin");
   revalidatePath("/products");
+  revalidatePath("/");
   redirect("/admin");
 }
 
@@ -220,4 +223,108 @@ export async function deleteService(formData: FormData): Promise<void> {
   revalidatePath("/admin/services");
   revalidatePath("/services");
   redirect("/admin/services");
+}
+
+// ------------------------------------------------------------ Category actions
+// Products reference categories by name (FK with ON UPDATE CASCADE / ON DELETE
+// SET NULL), so renames and deletes are reflected on products by the database.
+function revalidateCategories() {
+  revalidatePath("/", "layout");
+}
+
+function categoriesError(message: string): never {
+  redirect(`/admin/categories?error=${encodeURIComponent(message)}`);
+}
+
+function friendlyCategoryError(message: string, name: string): string {
+  return message.includes("duplicate key") ? `A category named “${name}” already exists.` : message;
+}
+
+export async function createCategory(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) redirect("/admin/login");
+
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) categoriesError("Category name is required");
+
+  const supabase = createAdminClient();
+  // New categories go to the end of the list.
+  const { data: last } = await supabase
+    .from("categories")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const { error } = await supabase.from("categories").insert({
+    name,
+    slug: slugify(name) || `category-${Date.now()}`,
+    sort_order: (last?.sort_order ?? 0) + 10,
+  });
+  if (error) categoriesError(friendlyCategoryError(error.message, name));
+
+  revalidateCategories();
+  redirect("/admin/categories");
+}
+
+export async function renameCategory(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) redirect("/admin/login");
+
+  const id = String(formData.get("id") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!id) return;
+  if (!name) categoriesError("Category name can't be empty");
+
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("categories")
+    .update({ name, slug: slugify(name) || `category-${Date.now()}` })
+    .eq("id", id);
+  if (error) categoriesError(friendlyCategoryError(error.message, name));
+
+  revalidateCategories();
+  redirect("/admin/categories");
+}
+
+export async function moveCategory(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) redirect("/admin/login");
+
+  const id = String(formData.get("id") ?? "").trim();
+  const direction = String(formData.get("direction") ?? "");
+  if (!id || (direction !== "up" && direction !== "down")) return;
+
+  const supabase = createAdminClient();
+  const { data: list } = await supabase
+    .from("categories")
+    .select("id")
+    .order("sort_order")
+    .order("name");
+  const ids = (list ?? []).map((c) => c.id);
+  const from = ids.indexOf(id);
+  const to = direction === "up" ? from - 1 : from + 1;
+  if (from < 0 || to < 0 || to >= ids.length) return;
+
+  // Swap, then rewrite every sort_order so the order is always clean (10, 20, …).
+  const moved = ids.splice(from, 1)[0] as string;
+  ids.splice(to, 0, moved);
+  await Promise.all(
+    ids.map((cid, i) => supabase.from("categories").update({ sort_order: (i + 1) * 10 }).eq("id", cid)),
+  );
+
+  revalidateCategories();
+  redirect("/admin/categories");
+}
+
+export async function deleteCategory(formData: FormData): Promise<void> {
+  if (!(await isAdminAuthenticated())) redirect("/admin/login");
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) return;
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("categories").delete().eq("id", id);
+  if (error) categoriesError(error.message);
+
+  revalidateCategories();
+  revalidatePath("/admin");
+  redirect("/admin/categories");
 }
