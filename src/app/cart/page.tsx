@@ -79,7 +79,7 @@ export default function CartPage() {
           Balloons, flowers and décor for every occasion are waiting for you.
         </p>
         <Link
-          href="/explore"
+          href="/products"
           className="bg-gold-500 hover:bg-gold-600 mt-8 inline-flex h-12 items-center rounded-lg px-6 font-medium text-white transition-colors"
         >
           Start shopping
@@ -99,7 +99,7 @@ export default function CartPage() {
             {itemCount} {itemCount === 1 ? "item" : "items"}
           </p>
         </div>
-        <Link href="/explore" className="text-gold-600 shrink-0 text-sm font-medium hover:underline">
+        <Link href="/products" className="text-gold-600 shrink-0 text-sm font-medium hover:underline">
           ← Continue shopping
         </Link>
       </div>

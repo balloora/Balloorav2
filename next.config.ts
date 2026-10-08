@@ -9,8 +9,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // The shop catalog now lives at /explore.
-      { source: "/shop", destination: "/explore", permanent: true },
+      // The shop catalog now lives at /products.
+      { source: "/shop", destination: "/products", permanent: true },
+      { source: "/explore", destination: "/products", permanent: true },
     ];
   },
   images: {

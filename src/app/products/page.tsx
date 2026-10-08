@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Product } from "@/types/database.types";
 
 export const metadata: Metadata = {
-  title: "Explore",
+  title: "Products",
   description: "Browse balloons, flowers, and event decor for every occasion.",
 };
 
@@ -18,7 +18,7 @@ interface PageProps {
   searchParams: Promise<{ occasion?: string }>;
 }
 
-export default async function ExplorePage({ searchParams }: PageProps) {
+export default async function ProductsPage({ searchParams }: PageProps) {
   const { occasion } = await searchParams;
   const activeOccasion = occasions.find((o) => o.slug === occasion);
 
@@ -48,13 +48,13 @@ export default async function ExplorePage({ searchParams }: PageProps) {
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
       <header className="mb-8">
         <p className="text-gold-600 text-sm font-medium tracking-wide uppercase">Balloora Collections</p>
-        <h1 className="mt-1 text-4xl font-bold">{activeOccasion ? activeOccasion.name : "Explore"}</h1>
+        <h1 className="mt-1 text-4xl font-bold">{activeOccasion ? activeOccasion.name : "Products"}</h1>
       </header>
 
       {/* Occasion filters — horizontal scroll on mobile, wraps on larger screens */}
       <div className="hide-scrollbar -mx-4 mb-10 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         <Link
-          href="/explore"
+          href="/products"
           className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
             activeOccasion ? "hover:bg-cream-100" : "bg-gold-500 border-gold-500 text-white"
           }`}
@@ -67,7 +67,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
           return (
             <Link
               key={o.slug}
-              href={`/explore?occasion=${o.slug}`}
+              href={`/products?occasion=${o.slug}`}
               className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 active ? "bg-gold-500 border-gold-500 text-white" : "hover:bg-cream-100"
               }`}

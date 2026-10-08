@@ -115,15 +115,15 @@ export default async function ProductPage({ params }: PageProps) {
           </li>
           <li aria-hidden>/</li>
           <li>
-            <Link href="/explore" className="hover:text-gold-600">
-              Explore
+            <Link href="/products" className="hover:text-gold-600">
+              Products
             </Link>
           </li>
           {occasion && (
             <>
               <li aria-hidden>/</li>
               <li>
-                <Link href={`/explore?occasion=${occasion.slug}`} className="hover:text-gold-600">
+                <Link href={`/products?occasion=${occasion.slug}`} className="hover:text-gold-600">
                   {occasion.name}
                 </Link>
               </li>
@@ -144,7 +144,7 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="flex flex-col lg:sticky lg:top-24 lg:col-span-5 lg:self-start lg:pt-2">
           {product.category && (
             <Link
-              href={occasion ? `/explore?occasion=${occasion.slug}` : "/explore"}
+              href={occasion ? `/products?occasion=${occasion.slug}` : "/products"}
               className="bg-gold-50 text-gold-700 hover:bg-gold-100 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tracking-wide uppercase transition-colors"
             >
               {occasion && <span className="[&>svg]:h-3.5 [&>svg]:w-3.5">{occasion.icon}</span>}
@@ -216,7 +216,7 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="mb-6 flex items-end justify-between gap-4">
             <h2 className="text-2xl font-semibold sm:text-3xl">You may also like</h2>
             <Link
-              href={occasion ? `/explore?occasion=${occasion.slug}` : "/explore"}
+              href={occasion ? `/products?occasion=${occasion.slug}` : "/products"}
               className="text-gold-600 shrink-0 text-sm font-medium hover:underline"
             >
               View all →

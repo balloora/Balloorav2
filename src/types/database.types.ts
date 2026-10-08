@@ -98,6 +98,60 @@ export interface Database {
           },
         ];
       };
+      services: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          service_type: string;
+          summary: string | null;
+          description: string | null;
+          price_from_cents: number | null;
+          currency: string;
+          location: string | null;
+          capacity: number | null;
+          image_url: string | null;
+          images: string[];
+          status: "draft" | "active" | "archived";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          service_type?: string;
+          summary?: string | null;
+          description?: string | null;
+          price_from_cents?: number | null;
+          currency?: string;
+          location?: string | null;
+          capacity?: number | null;
+          image_url?: string | null;
+          images?: string[];
+          status?: "draft" | "active" | "archived";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          slug?: string;
+          service_type?: string;
+          summary?: string | null;
+          description?: string | null;
+          price_from_cents?: number | null;
+          currency?: string;
+          location?: string | null;
+          capacity?: number | null;
+          image_url?: string | null;
+          images?: string[];
+          status?: "draft" | "active" | "archived";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       orders: {
         Row: {
           id: string;
@@ -179,6 +233,7 @@ export interface Database {
 }
 
 export type Product = Database["public"]["Tables"]["products"]["Row"];
+export type Service = Database["public"]["Tables"]["services"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];

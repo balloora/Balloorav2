@@ -25,7 +25,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
             {occasions.map((o) => (
               <li key={o.slug}>
-                <Link href={`/explore?occasion=${o.slug}`} className="hover:text-gold-600">
+                <Link href={`/products?occasion=${o.slug}`} className="hover:text-gold-600">
                   {o.name}
                 </Link>
               </li>
@@ -34,11 +34,16 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase">Explore</h3>
+          <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase">Browse</h3>
           <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
             <li>
-              <Link href="/explore" className="hover:text-gold-600">
-                Explore Collections
+              <Link href="/products" className="hover:text-gold-600">
+                Products
+              </Link>
+            </li>
+            <li>
+              <Link href="/services" className="hover:text-gold-600">
+                Services
               </Link>
             </li>
             <li>

@@ -80,7 +80,7 @@ export const isSupabaseConfigured = supabaseUrl.real && supabaseAnon.real;
 /** True when a real Stripe publishable key is present. */
 export const isStripeConfigured = stripePk.real;
 
-/** Back-compat alias — the Explore data gate keys off Supabase being configured. */
+/** Back-compat alias — the catalog data gate keys off Supabase being configured. */
 export const isConfigured = isSupabaseConfigured;
 
 let cachedServerEnv: z.infer<typeof serverSchema> | null = null;

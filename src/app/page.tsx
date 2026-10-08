@@ -53,7 +53,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/explore"
+              href="/products"
               className="bg-gold-500 hover:bg-gold-400 group inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-medium text-white shadow-lg transition-colors"
             >
               Explore Our Collections
@@ -77,7 +77,7 @@ export default function HomePage() {
             {occasions.map((o) => (
               <Link
                 key={o.slug}
-                href={`/explore?occasion=${o.slug}`}
+                href={`/products?occasion=${o.slug}`}
                 className="group inline-flex shrink-0 snap-start items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.07] py-2.5 pr-5 pl-2.5 text-sm font-medium text-white/90 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/15 hover:text-white"
               >
                 <span className="text-gold-200 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-colors group-hover:bg-white/20">
@@ -101,6 +101,10 @@ export default function HomePage() {
               floral styling, and full event decor tailored to your vision. Every arch, every bloom,
               every detail is designed to make your moment unforgettable.
             </p>
+            <p className="mt-4 leading-relaxed" style={{ color: "var(--muted)" }}>
+              You bring the reason to celebrate. We&apos;ll bring the colour, the texture, and the
+              wow when your guests walk in.
+            </p>
             <Link
               href="/#contact"
               className="text-gold-600 border-gold-300 hover:bg-gold-50 mt-6 inline-block rounded-lg border px-6 py-3 text-sm font-medium transition-colors"
@@ -108,24 +112,43 @@ export default function HomePage() {
               Get a Quote
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-4 text-center">
+          {/* Our promises — commitments, not metrics. */}
+          <ul className="grid gap-4">
             {[
-              { stat: "500+", label: "Events Styled" },
-              { stat: "6", label: "Occasion Types" },
-              { stat: "4.9★", label: "Client Rating" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="rounded-2xl border bg-white p-6"
+              {
+                title: "Made for your moment",
+                body: "No copy-paste setups. Every design starts with your colours, your theme, and your story.",
+              },
+              {
+                title: "Balloons, blooms & decor, together",
+                body: "One team styling the whole space, so every piece feels like it belongs.",
+              },
+              {
+                title: "Every detail, considered",
+                body: "From the shape of an arch to the last finishing touch, nothing is an afterthought.",
+              },
+              {
+                title: "Your estimate is on us",
+                body: "Share your vision and we'll put together a complimentary quote, with no pressure.",
+              },
+            ].map((p, i) => (
+              <li
+                key={p.title}
+                className="flex gap-4 rounded-2xl border bg-white p-5"
                 style={{ borderColor: "var(--border)" }}
               >
-                <p className="text-gold-600 font-serif text-3xl font-bold">{s.stat}</p>
-                <p className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
-                  {s.label}
-                </p>
-              </div>
+                <span className="text-gold-600 font-serif text-2xl leading-none font-bold">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <p className="font-semibold">{p.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                    {p.body}
+                  </p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
