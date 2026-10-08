@@ -11,7 +11,7 @@ export const serviceTypes = [
 export type ServiceTypeName = (typeof serviceTypes)[number]["name"];
 
 /** Contact address quote requests are sent to. */
-export const QUOTE_EMAIL = "hello@balloora.events";
+export const QUOTE_EMAIL = "info@balloora.ca";
 
 /** mailto: link that opens a quote request pre-filled for a service. */
 export function quoteMailto(serviceTitle?: string): string {
@@ -28,3 +28,6 @@ export function quoteMailto(serviceTitle?: string): string {
   ].join("\n");
   return `mailto:${QUOTE_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
+
+/** Phone number shown on service CTAs. */
+export const CONTACT_PHONE = { display: "+1 (437) 261-1195", tel: "+14372611195" } as const;

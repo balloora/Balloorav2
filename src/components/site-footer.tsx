@@ -62,8 +62,8 @@ export function SiteFooter() {
         <div>
           <h3 className="mb-3 text-sm font-semibold tracking-wide uppercase">Get in touch</h3>
           <ul className="space-y-2 text-sm" style={{ color: "var(--muted)" }}>
-            <li>hello@balloora.events</li>
-            <li>+1 (555) 010-2030</li>
+            <li>info@balloora.ca</li>
+            <li>+1 (437) 261-1195</li>
             <li>Mon–Sat, 9am–6pm</li>
           </ul>
         </div>

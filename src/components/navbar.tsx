@@ -106,7 +106,7 @@ export function Navbar() {
               <path d="m20 20-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
             </svg>
           </Link>
-          <a href="tel:+15550102030" aria-label="Call us" className="hover:text-gold-600 block">
+          <a href="tel:+14372611195" aria-label="Call us" className="hover:text-gold-600 block">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path
                 d="M5 4h3l1.5 4L7.5 9.5a11 11 0 0 0 5 5l1.5-2L18 14v3a2 2 0 0 1-2 2A13 13 0 0 1 3 6a2 2 0 0 1 2-2Z"
@@ -183,7 +183,7 @@ export function Navbar() {
               );
             })}
             <a
-              href="tel:+15550102030"
+              href="tel:+14372611195"
               className="hover:bg-cream-100 flex items-center gap-2 rounded-lg px-3 py-2"
               onClick={() => setMobileOpen(false)}
             >
@@ -195,7 +195,7 @@ export function Navbar() {
                   strokeLinejoin="round"
                 />
               </svg>
-              Call +1 (555) 010-2030
+              Call +1 (437) 261-1195
             </a>
             <Link
               href="/#contact"

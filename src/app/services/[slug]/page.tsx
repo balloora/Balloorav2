@@ -97,11 +97,7 @@ export default async function ServicePage({ params }: PageProps) {
           {type && (
             <>
               <li aria-hidden>/</li>
-              <li>
-                <Link href={`/services?type=${type.slug}`} className="hover:text-gold-600">
-                  {type.plural}
-                </Link>
-              </li>
+              <li>{type.plural}</li>
             </>
           )}
           <li aria-hidden>/</li>
@@ -180,8 +176,8 @@ export default async function ServicePage({ params }: PageProps) {
             </a>
             <p className="mt-3 text-center text-xs" style={{ color: "var(--muted)" }}>
               or email {QUOTE_EMAIL} · call{" "}
-              <a href="tel:+15550102030" className="hover:text-gold-600">
-                +1 (555) 010-2030
+              <a href="tel:+14372611195" className="hover:text-gold-600">
+                +1 (437) 261-1195
               </a>
             </p>
           </div>
@@ -193,7 +189,7 @@ export default async function ServicePage({ params }: PageProps) {
           <div className="mb-6 flex items-end justify-between gap-4">
             <h2 className="text-2xl font-semibold sm:text-3xl">More {type?.plural.toLowerCase() ?? "services"}</h2>
             <Link
-              href={type ? `/services?type=${type.slug}` : "/services"}
+              href="/services"
               className="text-gold-600 shrink-0 text-sm font-medium hover:underline"
             >
               View all →

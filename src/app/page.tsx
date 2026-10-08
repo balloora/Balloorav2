@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { FeaturedDesigns } from "@/components/featured-designs";
+import { AboutFlow } from "@/components/about-flow";
+import { HomeShowcase } from "@/components/home-showcase";
 import { occasions } from "@/lib/occasions";
 
 export const revalidate = 60;
@@ -91,69 +92,10 @@ export default function HomePage() {
       </section>
 
       {/* ---------------------------------------------------------------- About */}
-      <section id="about" className="bg-cream-50 border-y" style={{ borderColor: "var(--border)" }}>
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-10">
-          <div>
-            <p className="text-gold-600 text-sm font-medium tracking-wide uppercase">Our story</p>
-            <h2 className="mt-1 text-3xl font-bold sm:text-4xl">Designed to Delight</h2>
-            <p className="mt-4 leading-relaxed" style={{ color: "var(--muted)" }}>
-              From intimate gatherings to grand celebrations, Balloora crafts balloon installations,
-              floral styling, and full event decor tailored to your vision. Every arch, every bloom,
-              every detail is designed to make your moment unforgettable.
-            </p>
-            <p className="mt-4 leading-relaxed" style={{ color: "var(--muted)" }}>
-              You bring the reason to celebrate. We&apos;ll bring the colour, the texture, and the
-              wow when your guests walk in.
-            </p>
-            <Link
-              href="/#contact"
-              className="text-gold-600 border-gold-300 hover:bg-gold-50 mt-6 inline-block rounded-lg border px-6 py-3 text-sm font-medium transition-colors"
-            >
-              Get a Quote
-            </Link>
-          </div>
-          {/* Our promises — commitments, not metrics. */}
-          <ul className="grid gap-4">
-            {[
-              {
-                title: "Made for your moment",
-                body: "No copy-paste setups. Every design starts with your colours, your theme, and your story.",
-              },
-              {
-                title: "Balloons, blooms & decor, together",
-                body: "One team styling the whole space, so every piece feels like it belongs.",
-              },
-              {
-                title: "Every detail, considered",
-                body: "From the shape of an arch to the last finishing touch, nothing is an afterthought.",
-              },
-              {
-                title: "Your estimate is on us",
-                body: "Share your vision and we'll put together a complimentary quote, with no pressure.",
-              },
-            ].map((p, i) => (
-              <li
-                key={p.title}
-                className="flex gap-4 rounded-2xl border bg-white p-5"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <span className="text-gold-600 font-serif text-2xl leading-none font-bold">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <p className="font-semibold">{p.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-                    {p.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <AboutFlow />
 
-      {/* -------------------------------------------------- Featured designs */}
-      <FeaturedDesigns />
+      {/* ---------------------------------------- Products & services showcase */}
+      <HomeShowcase />
 
       {/* ------------------------------------------------------------ Contact CTA */}
       <section id="contact" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-10">
@@ -186,7 +128,7 @@ export default function HomePage() {
               </p>
               <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 <Link
-                  href="mailto:hello@balloora.events"
+                  href="mailto:info@balloora.ca"
                   className="bg-gold-500 hover:bg-gold-400 group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-medium text-white transition-colors"
                 >
                   Contact the Team
@@ -195,10 +137,10 @@ export default function HomePage() {
                   </span>
                 </Link>
                 <a
-                  href="tel:+15550102030"
+                  href="tel:+14372611195"
                   className="text-sm font-medium text-white/90 transition-colors hover:text-white"
                 >
-                  or call +1 (555) 010-2030
+                  or call +1 (437) 261-1195
                 </a>
               </div>
             </div>

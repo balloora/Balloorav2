@@ -52,27 +52,83 @@ h3,
   display: none;
 }
 
-/* Auto-scrolling carousel (Featured Designs) */
-@keyframes marquee-scroll {
+/* Vertical auto-scrolling columns (homepage Products / Services showcase) */
+@keyframes marquee-up {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    /* Track holds two identical copies; each card carries its own trailing
-       margin, so exactly half the track equals one copy — a seamless loop. */
-    transform: translate3d(-50%, 0, 0);
+    /* Column holds two identical copies with per-card bottom margin. */
+    transform: translate3d(0, -50%, 0);
   }
 }
 
-.marquee-track {
-  animation: marquee-scroll 45s linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+.showcase-mask {
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
 }
 
-.group:hover .marquee-track {
+.showcase-col {
+  animation: marquee-up var(--showcase-duration, 40s) linear infinite;
+  will-change: transform;
+}
+
+.showcase-col-reverse {
+  animation-direction: reverse;
+}
+
+.showcase:hover .showcase-col {
   animation-play-state: paused;
+}
+
+/* About flow: gentle float for the round photos */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.bob {
+  animation: bob 6s ease-in-out infinite;
+}
+
+/* Scroll-driven reveal + line fill. Browsers without scroll timelines just
+   show everything statically. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flow-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+
+  .flow-fill {
+    animation: flow-grow linear both;
+    animation-timeline: view();
+    animation-range: cover 10% cover 70%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,9 +139,14 @@ h3,
     transition-duration: 0.01ms !important;
   }
 
-  .marquee-track {
-    animation: none;
-    flex-wrap: wrap;
-    justify-content: center;
+  .showcase-col,
+  .bob,
+  .reveal {
+    animation: none !important;
+  }
+
+  .flow-fill {
+    animation: none !important;
+    transform: none;
   }
 }
