@@ -132,6 +132,9 @@ export async function POST(request: Request) {
       mode: "payment",
       // Reuse the customer email if we know it, for nicer receipts.
       customer_email: user?.email ?? undefined,
+      // Delivery details: shown on the payment in the Stripe Dashboard.
+      shipping_address_collection: { allowed_countries: ["CA", "US"] },
+      phone_number_collection: { enabled: true },
       line_items: items.map((item) => {
         const product = productsById.get(item.productId)!;
         return {
