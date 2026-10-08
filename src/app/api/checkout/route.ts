@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const currency = products?.[0]?.currency ?? "usd";
+  const currency = products?.[0]?.currency ?? "cad";
   const totalCents = items.reduce((sum, item) => {
     const product = productsById.get(item.productId)!;
     return sum + product.price_cents * item.quantity;

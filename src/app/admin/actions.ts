@@ -115,6 +115,7 @@ export async function saveProduct(formData: FormData): Promise<void> {
     category,
     status,
     price_cents: priceCents,
+    currency: "cad",
     inventory: Number.isFinite(inventory) ? Math.max(0, Math.trunc(inventory)) : 0,
     images,
     image_url: imageUrl,

@@ -56,16 +56,19 @@ export default function HomePage() {
               href="/products"
               className="bg-gold-500 hover:bg-gold-400 group inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-medium text-white shadow-lg transition-colors"
             >
-              Explore Our Collections
+              Explore Our Products
               <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
                 →
               </span>
             </Link>
             <Link
-              href="/#contact"
-              className="inline-flex items-center rounded-full border border-white/40 px-8 py-3.5 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10"
+              href="/services"
+              className="group inline-flex items-center gap-2 rounded-full border border-white/40 px-8 py-3.5 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/10"
             >
-              Get a Quote
+              Explore Our Services
+              <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
             </Link>
           </div>
         </div>

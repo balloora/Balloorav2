@@ -88,7 +88,7 @@ export default function CartPage() {
     );
   }
 
-  const currency = items[0]?.currency ?? "usd";
+  const currency = items[0]?.currency ?? "cad";
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-8 pb-20 sm:px-6 lg:px-10">

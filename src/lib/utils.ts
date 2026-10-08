@@ -3,7 +3,7 @@
  * localized currency string. Storing money as integer cents avoids
  * floating-point rounding errors.
  */
-export function formatPrice(cents: number, currency = "usd", locale = "en-US"): string {
+export function formatPrice(cents: number, currency = "cad", locale = "en-CA"): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currency.toUpperCase(),
