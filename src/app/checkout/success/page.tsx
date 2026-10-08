@@ -26,10 +26,10 @@ export default function CheckoutSuccessPage() {
         email.
       </p>
       <div className="mt-6 flex justify-center gap-3">
-        <Link href="/account">
-          <Button variant="secondary">View my orders</Button>
-        </Link>
         <Link href="/">
+          <Button variant="secondary">Back to home</Button>
+        </Link>
+        <Link href="/products">
           <Button>Keep shopping</Button>
         </Link>
       </div>

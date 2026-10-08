@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { env } from "@/lib/env";
 import { getStripe } from "@/lib/stripe";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -37,12 +36,6 @@ export async function POST(request: Request) {
   }
 
   const { items } = parsed.data;
-
-  // The signed-in user is optional — guests can check out too.
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   // SECURITY: never trust prices from the client. Re-fetch authoritative
   // product data (price, availability) from the database using the admin
@@ -99,7 +92,7 @@ export async function POST(request: Request) {
   const { data: order, error: orderError } = await admin
     .from("orders")
     .insert({
-      buyer_id: user?.id ?? null,
+      buyer_id: null,
       status: "pending",
       total_cents: totalCents,
       currency,
@@ -130,8 +123,6 @@ export async function POST(request: Request) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      // Reuse the customer email if we know it, for nicer receipts.
-      customer_email: user?.email ?? undefined,
       // Delivery details: shown on the payment in the Stripe Dashboard.
       shipping_address_collection: { allowed_countries: ["CA", "US"] },
       phone_number_collection: { enabled: true },

@@ -36,11 +36,6 @@ export function SiteFooter() {
                 About Us
               </Link>
             </li>
-            <li>
-              <Link href="/account" className="hover:text-gold-600">
-                My Account
-              </Link>
-            </li>
           </ul>
         </div>
 
@@ -54,8 +49,19 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t py-6 text-center text-xs" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-        © {new Date().getFullYear()} Balloora Events. All rights reserved.
+      <div
+        className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 border-t px-4 py-6 text-xs sm:flex-row sm:px-6 lg:px-10"
+        style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+      >
+        <p>© {new Date().getFullYear()} Balloora Events. All rights reserved.</p>
+        <nav aria-label="Legal" className="flex gap-5">
+          <Link href="/privacy" className="hover:text-gold-600">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:text-gold-600">
+            Terms &amp; Conditions
+          </Link>
+        </nav>
       </div>
     </footer>
   );
